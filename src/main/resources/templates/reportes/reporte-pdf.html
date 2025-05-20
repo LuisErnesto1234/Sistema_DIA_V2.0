@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8"  content="application/pdf"/>
+  <title>Reporte de Control de Agua</title>
+  <style type="text/css">
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+    }
+
+    .logo {
+      height: 60px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #888;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      text-align: right;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Reporte de Control de Agua</h1>
+
+<div class="header">
+  <img class="logo" th:src="@{/images/logoFinal.png}" alt="Logo">
+  <div>
+    <strong>AAHH Divino Niño - Comas</strong><br />
+    <span>Reporte de uso de agua</span>
+  </div>
+</div>
+
+<table>
+  <thead>
+  <tr>
+    <th>Usuario</th>
+    <th>Fecha</th>
+    <th>Hora Inicio</th>
+    <th>Hora Fin</th>
+    <th>Minutos</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="control : ${controles}">
+    <td th:text="${control.usuario.nombre}"></td>
+    <td th:text="${control.fechaRegistro}"></td>
+    <td th:text="${control.horaInicio}"></td>
+    <td th:text="${control.horaFin}"></td>
+    <td th:text="${control.minutosUtilizados}"></td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  <p th:text="'Fecha de generación: ' + ${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">Fecha</p>
+</div>
+
+</body>
+</html>
+

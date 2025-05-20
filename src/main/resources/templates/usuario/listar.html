@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <div th:replace="recursos/meta.html"></div>
+    <title>Lista de Usuarios</title>
+</head>
+<body>
+<div th:replace="recursos/aside.html"></div>
+<main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
+    <div th:replace="recursos/navbar.html"></div>
+    <div class="p-4 sm:p-6">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+            <!-- Cabecera mejorada -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-4 bg-gradient-to-r from-orange-600 to-amber-600 text-white">
+                <div class="mb-4 sm:mb-0">
+                    <h3 class="text-2xl font-bold tracking-tight">Gestión de Usuarios</h3>
+                    <p class="text-sm text-orange-100 opacity-90 mt-1">Administra todos los usuarios registrados en el sistema</p>
+                </div>
+                <a href="/usuario/nuevo" class="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-rose-600 to-amber-500 p-0.5 font-medium text-white hover:shadow-lg transition-all duration-300">
+                <span class="relative rounded-md bg-rose-600 px-5 py-2.5 transition-all duration-300 group-hover:bg-opacity-0">
+                    <span class="flex items-center">
+                        <span class="mr-2">Agregar Usuario</span>
+                        <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
+                            <path d="M7.5 2V13M2 7.5H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </span>
+                </a>
+            </div>
+
+            <!-- Barra de herramientas -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-3 bg-gray-50 border-b border-gray-200 gap-3">
+                <div class="relative w-full sm:w-64">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input type="text"
+                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm"
+                           placeholder="Buscar usuarios por nombre"
+                    >
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                        <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                        Filtros
+                    </button>
+                    <button class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                        <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Exportar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla mejorada -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellidos</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Minutos Acumulados</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Minutos Semana</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Historial</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tr th:each="usuario : ${usuarios.content}" class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${usuario.id}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 flex items-center justify-center">
+                            <img th:src="${usuario.fotoPerfil}" alt="imagen" class="h-10 w-10 rounded-full object-cover" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${usuario.nombre}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${usuario.apellido}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800" th:text="${usuario.minutosAcumulados}"></span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" th:text="${usuario.minutosSemana}"></span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div class="flex flex-wrap gap-1">
+                                <span th:each="rol : ${usuario.roles}"
+                                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                      th:classappend="${rol.nombre == 'ADMIN' ? 'bg-purple-100 text-purple-800' :
+                                                      rol.nombre == 'USER' ? 'bg-green-100 text-green-800' :
+                                                      'bg-gray-100 text-gray-800'}"
+                                      th:text="${rol.nombre}"></span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <a th:href="@{/reportes/usuario/{id}(id=${usuario.id})}" class="text-amber-600 hover:text-amber-900 inline-flex items-center justify-center p-1 rounded-full hover:bg-amber-50 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                                <span class="sr-only">Historial</span>
+                            </a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <div class="flex justify-center space-x-2">
+                                <a th:href="@{/usuario/editar/{id}(id=${usuario.id})}"
+                                   class="text-green-600 hover:text-green-900 inline-flex items-center justify-center p-1 rounded-full hover:bg-green-50 transition-colors"
+                                   title="Editar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/>
+                                    </svg>
+                                    <span class="sr-only">Editar</span>
+                                </a>
+                                <a th:href="@{/usuario/eliminar/{id}(id=${usuario.id})}"
+                                   onclick="return confirm('¿Seguro que quieres eliminar este usuario?')"
+                                   class="text-red-600 hover:text-red-900 inline-flex items-center justify-center p-1 rounded-full hover:bg-red-50 transition-colors"
+                                   title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                    </svg>
+                                    <span class="sr-only">Eliminar</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación mejorada -->
+            <div class="bg-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200">
+                <div class="mb-4 sm:mb-0">
+                    <p class="text-sm text-gray-700">
+                        Mostrando <span class="font-medium" th:text="${usuarios.number * usuarios.size + 1}"></span> a
+                        <span class="font-medium" th:text="${(usuarios.number * usuarios.size) + usuarios.numberOfElements}"></span> de
+                        <span class="font-medium" th:text="${usuarios.totalElements}"></span> resultados
+                    </p>
+                </div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <a th:href="@{/usuario(page=${usuarios.number > 0 ? usuarios.number - 1 : 0})}"
+                       class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                       th:classappend="${usuarios.number == 0} ? 'opacity-50 cursor-not-allowed'">
+                        <span class="sr-only">Anterior</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+
+                    <a th:each="i : ${#numbers.sequence(0, usuarios.totalPages - 1)}"
+                       th:href="@{/usuario(page=${i})}"
+                       th:text="${i + 1}"
+                       class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium"
+                       th:classappend="${i == usuarios.number} ? 'z-10 bg-amber-50 border-amber-500 text-amber-600' : 'text-gray-500 hover:bg-gray-50'">
+                    </a>
+
+                    <a th:href="@{/usuario(page=${usuarios.number < usuarios.totalPages - 1 ? usuarios.number + 1 : usuarios.totalPages - 1})}"
+                       class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                       th:classappend="${usuarios.number == usuarios.totalPages - 1} ? 'opacity-50 cursor-not-allowed'">
+                        <span class="sr-only">Siguiente</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</main>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

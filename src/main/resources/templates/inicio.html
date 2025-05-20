@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="recursos/meta.html"></div>
+    <title>Pagina de inicio - DIA</title>
+    <style>
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="recursos/aside.html"></div>
+<main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
+    <div th:replace="recursos/navbar.html"></div>
+    <div class="p-6 w-full flex justify-center items-center">
+        <div class="relative flex-[1_auto] flex flex-col break-words min-w-0 bg-clip-border rounded-[.95rem] bg-white lg:m-5 md:m-auto">
+            <div class="w-full p-4 sm:p-6 md:p-8 relative flex flex-col min-w-0 break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30">
+
+                <!-- Grid responsive conservando bento en PC -->
+                <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-5 auto-rows-[minmax(80px,_auto)] gap-4 w-full">
+                    <!-- Aquí van tus 6 cards -->
+
+                    <!-- Card 1: Fecha -->
+                    <div title="Fecha Actual" class="card-anim lg:row-span-2 rounded-2xl backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-300 group overflow-hidden relative"
+                         style="background-image: linear-gradient(to left bottom, #00dcff, #00bcff, #0097ff, #006aff, #000dff);">
+                        <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-500"></div>
+                        <div class="flex flex-col h-full p-6 justify-between items-center text-white relative z-10">
+                            <div class="text-center mb-2">
+                                <p class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-1">Fecha</p>
+                                <div class="w-12 h-0.5 bg-white/40 mx-auto rounded-full"></div>
+                            </div>
+                            <div class="text-center m-auto">
+                                <p class="text-2xl sm:text-3xl md:text-3xl font-mono font-medium tracking-wider text-center">
+                                    <span class="text-white/90 group-hover:text-white transition-colors duration-300 text-center" th:text="${fecha}" ></span>
+                                </p>
+                                <div class="w-16 h-0.5 bg-white/30 mx-auto mt-3 rounded-full"></div>
+                            </div>
+                            <div class="mt-auto bg-white/20 rounded-xl p-4 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-500">
+                                <img th:src="@{/icons/fecha.svg}" alt="Icono de Fecha" width="70" height="70"
+                                     class="drop-shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-white/20 transition-all duration-300 pointer-events-none"></div>
+                    </div>
+
+                    <!-- Card 2: Hora -->
+                    <div title="Hora actual" class="card-anim lg:row-span-3 lg:row-start-3 rounded-2xl backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden relative isolate"
+                         style="background-image: linear-gradient(to left top, #580091, #7e04ae, #a607ca, #d106e5, #fe00ff);">
+                        <div class="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500">
+                            <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                            <div class="absolute bottom-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-pulse delay-100"></div>
+                        </div>
+                        <div class="flex flex-col h-full p-6 sm:p-8 justify-between items-center text-white relative z-10">
+                            <div class="text-center md:mb-4">
+                                <h4 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tighter mb-2 drop-shadow-lg">Hora</h4>
+                                <div class="w-16 h-0.5 bg-white/40 mx-auto rounded-full group-hover:w-24 transition-all duration-500"></div>
+                            </div>
+
+                            <div class="text-center my-6">
+                                <p class="text-4xl sm:text-4xl md:text-5xl font-mono font-medium tracking-wider" id="hora">
+                                    <span class="text-white/90 group-hover:text-white transition-colors duration-300">${hora}</span>
+                                </p>
+                                <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-white/50 to-transparent mt-4 opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </div>
+
+                            <div class="mt-auto bg-white/20 rounded-xl p-4 sm:p-5 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-500 shadow-inner">
+                                <img th:src="@{/icons/hora.svg}" alt="Icono de hora actual" width="64" height="64"
+                                     class="sm:w-20 sm:h-20 drop-shadow-2xl group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500">
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-white/30 transition-all duration-500 pointer-events-none"></div>
+                    </div>
+                    <script>
+                        function actualizarHora() {
+                            fetch('/api/hora')
+                                .then(res => res.text())
+                                .then(hora => {
+                                    document.getElementById('hora').innerText = hora;
+                                });
+                        }
+
+                        // Actualiza cada 60 segundos
+                        setInterval(actualizarHora, 60000);
+
+                        // Llama una vez al cargar
+                        actualizarHora();
+                    </script>
+
+                    <!-- Card 3: Reportes -->
+                    <a th:href="@{/reporte/fecha}" title="Ir al panel de reportes" aria-label="Ir al panel de reportes" class="card-anim lg:col-span-2 lg:row-span-2 rounded-2xl bg-indigo-500/20 backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-300 group overflow-hidden"
+                         style="background-image: linear-gradient(to left bottom, #ff004f, #ff0068, #ff0083, #ff009f, #ff00bc);">
+                        <div class="flex flex-col h-full p-4 sm:p-6 justify-evenly items-center text-white">
+
+                            <!-- Título -->
+                            <div class="text-center mb-4">
+                                <h4 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-2">Reportes</h4>
+                                <div class="w-16 h-1 bg-white/30 mx-auto rounded-full"></div>
+                            </div>
+
+                            <!-- Ícono -->
+                            <div class="flex-grow flex items-center justify-center">
+                                <div class="bg-white/20 p-4 sm:p-5 md:p-6 rounded-2xl backdrop-blur-sm group-hover:bg-white/30 transition-all duration-500">
+                                    <img th:src="@{/icons/reportes.svg}" alt="Icono de reportes"
+                                         class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 drop-shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Card 4: Estado -->
+                    <div title="¿Quién esta juntando?" class="card-anim flex flex-col justify-center items-center lg:col-span-2 lg:row-span-3 rounded-2xl backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden relative isolate"
+                         style="background-image: linear-gradient(to left bottom, #0ec902, #50d700, #76e400, #97f100, #b7fe01);">
+                        <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-500"></div>
+                        <div class="flex flex-col h-full p-6 md:p-8 justify-between items-center text-white relative z-10">
+                            <div class="text-center mb-4">
+                                <span class="font-bold tracking-tighter mb-2 drop-shadow-lg text-2xl sm:text-3xl md:text-4xl">Estado</span>
+                                <div class="w-16 h-0.5 bg-white/40 mx-auto rounded-full group-hover:w-24 transition-all duration-500"></div>
+                            </div>
+
+                            <div class="text-center mt-0 sm:mt-2 w-full">
+                                <div th:if="${usuarioJuntando != null}">
+                                    <p class="text-lg sm:text-xl md:text-2xl mb-2 opacity-90">Ahorita está juntando:</p>
+                                    <div class="bg-white/10 rounded-xl p-4 backdrop-blur-xs mb-4 group-hover:bg-white/20 transition-all duration-300">
+                                        <p class="text-xl sm:text-2xl md:text-3xl font-medium tracking-wide"
+                                           th:text="${usuarioJuntando.usuario.nombre}"></p>
+                                        <p class="text-xl sm:text-2xl md:text-3xl font-medium tracking-wide"
+                                           th:text="${usuarioJuntando.usuario.apellido}"></p>
+                                    </div>
+                                    <div class="bg-white/10 rounded-xl p-4 backdrop-blur-xs mb-4 group-hover:bg-white/20 transition-all duration-300">
+                                        <p class="text-lg sm:text-xl md:text-2xl font-medium tracking-wide">Empezó a
+                                            juntar desde:</p>
+                                        <p class="text-lg sm:text-xl md:text-2xl font-medium tracking-wide"
+                                           th:text="${#temporals.format(usuarioJuntando.horaInicio, 'HH:mm')}"></p>
+                                    </div>
+                                </div>
+
+                                <div class="text-center my-0 sm:my-6" th:if="${usuarioJuntando == null}">
+                                    <p class="text-xl sm:text-3xl md:text-4xl font-mono font-medium tracking-wider">
+                                        <span class="text-white/90 group-hover:text-white transition-colors duration-300">¡No hay nadie juntando!</span>
+                                    </p>
+                                </div>
+
+                                <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300 mt-2 mb-2 sm:mb-0"></div>
+                            </div>
+
+                            <div class="m-auto bg-white/20 rounded-xl p-4 sm:p-5 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-500 shadow-inner">
+                                <img th:src="@{/icons/usuario.svg}" alt="Icono de usuario" width="64" height="64"
+                                     class="sm:w-20 sm:h-20 drop-shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+                            </div>
+                        </div>
+
+                        <div class="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-white/30 transition-all duration-500 pointer-events-none"></div>
+
+                        <div class="absolute top-4 right-4 flex items-center">
+        <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        </span>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Controlar -->
+                    <a th:href="@{/control/nuevo}" title="Ir al panel de control" aria-label="Ir al panel de control de Agua" class="card-anim lg:col-span-2 lg:row-span-3 rounded-2xl backdrop-blur-lg shadow-xl hover:shadow-2xl transition-all duration-500 group overflow-hidden relative isolate"
+                         style="background-image: linear-gradient(to right bottom, #ff0000, #ff001d, #ff002f, #ff003e, #ff094c);">
+
+                        <!-- Fondo animado al hacer hover -->
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700">
+                            <div class="absolute inset-0 bg-white animate-pulse"></div>
+                        </div>
+
+                        <!-- Contenido principal -->
+                        <div class="flex flex-col h-full p-4 sm:p-6 md:p-8 justify-evenly items-center text-white relative z-10">
+
+                            <!-- Título -->
+                            <div class="text-center w-full">
+                                <h4 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tighter mb-3 drop-shadow-lg">Controlar</h4>
+                                <div class="mb-6 sm:mb-0 w-16 h-1 bg-white/50 mx-auto rounded-full group-hover:w-24 transition-all duration-500"></div>
+                            </div>
+
+                            <!-- Ícono -->
+                            <div class="flex items-center justify-center">
+                                <div class="bg-white/20 rounded-2xl p-4 sm:p-5 md:p-6 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-500 shadow-inner hover:shadow-lg">
+                                    <img th:src="@{/icons/controlar.svg}" alt="Icono de control"
+                                         class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 drop-shadow-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Borde animado -->
+                        <div class="absolute inset-0 rounded-2xl border-4 border-transparent group-hover:border-white/40 transition-all duration-700 pointer-events-none"></div>
+
+                        <!-- Notificación animada -->
+                        <div class="absolute top-4 right-4 sm:top-5 sm:right-5 animate-bounce">
+        <span class="relative flex h-4 w-4">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-90"></span>
+            <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
+        </span>
+                        </div>
+                    </a>
+                    <!-- Card 6: Usuarios -->
+                    <a th:href="@{/usuario}" title="Ir al panel de usuarios" aria-label="Ir al panel de usuarios" class="card-anim lg:col-span-2 lg:row-span-2 rounded-2xl backdrop-blur-lg shadow-2xl hover:shadow-3xl transition-all duration-500 group overflow-hidden relative isolate transform-style-preserve-3d"
+                         style="background-image: linear-gradient(to right bottom, #ff4700, #ff7c00, #ffaa00, #ffd500, #fcff00);">
+
+                        <!-- Efectos animados flotantes -->
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                            <div class="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-float"></div>
+                            <div class="absolute bottom-1/3 right-1/3 w-1 h-1 bg-amber-200 rounded-full animate-float delay-200"></div>
+                            <div class="absolute top-3/4 left-2/3 w-2 h-2 bg-orange-100 rounded-full animate-float delay-400"></div>
+                        </div>
+                        <div class="absolute inset-0 bg-radial-gradient from-yellow-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                        <!-- Contenido -->
+                        <div class="flex flex-col h-full p-4 sm:p-6 md:p-8 justify-evenly items-center text-white relative z-10">
+
+                            <!-- Título -->
+                            <div class="text-center w-full">
+                                <h4 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tighter mb-3 drop-shadow-lg shadow-orange-800/50">
+                                    Usuarios
+                                </h4>
+                                <div class="w-16 sm:w-20 h-1 bg-gradient-to-r from-transparent via-white/80 to-transparent mx-auto rounded-full group-hover:w-24 transition-all duration-700"></div>
+                            </div>
+
+                            <!-- Ícono -->
+                            <div class="relative flex-grow flex items-center justify-center w-full">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="bg-white/30 rounded-full w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 blur-xl group-hover:scale-125 transition-transform duration-1000"></div>
+                                </div>
+                                <div class="bg-white/20 rounded-2xl p-4 sm:p-5 md:p-6 backdrop-blur-sm group-hover:bg-white/30 transition-all duration-500 shadow-inner-lg z-10 rotate-0 group-hover:rotate-[5deg]">
+                                    <img th:src="@{/icons/lista_usuarios.svg}" alt="Icono de usuarios"
+                                         class="w-20 sm:w-24 md:w-[90px] h-auto drop-shadow-2xl group-hover:scale-110 transition-transform duration-500">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Borde animado -->
+                        <div class="absolute inset-0 rounded-2xl border-4 border-transparent group-hover:border-amber-300/50 transition-all duration-700 pointer-events-none"></div>
+
+                        <!-- Esquinas animadas -->
+                        <div class="absolute -top-1 -left-1 w-6 h-6 border-t-2 border-l-2 border-amber-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute -top-1 -right-1 w-6 h-6 border-t-2 border-r-2 border-amber-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"></div>
+                        <div class="absolute -bottom-1 -left-1 w-6 h-6 border-b-2 border-l-2 border-amber-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200"></div>
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 border-b-2 border-r-2 border-amber-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-300"></div>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const cards = document.querySelectorAll(".card-anim");
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && window.innerWidth < 1024) {
+                    entry.target.classList.add("animate-fade-in-up");
+                    observer.unobserve(entry.target); // solo animar una vez
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        cards.forEach(card => observer.observe(card));
+    });
+</script>
+
+</body>
+</html>

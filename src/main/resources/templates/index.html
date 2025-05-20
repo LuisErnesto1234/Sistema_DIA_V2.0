@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <div th:replace="recursos/meta.html"></div>
+    <title>Inicio | Sistema de control de agua</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-gradient-option1 {
+                background-image: linear-gradient(to right bottom, #002093, #005ec7, #0092d9, #00c1d4, #4aedca);
+            }
+            .bg-gradient-option2 {
+                background-image: linear-gradient(to bottom right, #ff013d, #f80070, #d800a0, #9d31c9, #0051e1);
+            }
+        }
+    </style>
+</head>
+<body class="font-['Poppins'] bg-gray-100 p-0 m-0">
+<div class="w-full min-h-screen md:h-screen flex flex-col items-center justify-center p-4">
+    <div class="mb-8 text-center">
+        <h3 class="text-xl md:text-2xl font-medium text-gray-800">Sistema de control de agua - DIA</h3>
+    </div>
+
+    <div class="w-full flex flex-col md:flex-row h-auto md:h-screen">
+        <!-- Opción 1 - Gestión Usuarios -->
+        <div id="option1" class="flex-1 bg-gradient-option1 text-white shadow-md md:shadow-lg transition-all duration-300 flex flex-col items-center justify-center p-8 hover:shadow-xl hover:bg-gradient-option1-hover">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 md:mb-8">Gestión Usuarios</h2>
+            <img th:src="@{/icons/gestion.svg}" alt="Icono de Gestión de usuarios"
+                 class="w-1/5 max-w-[150px] pb-5 md:pb-8">
+            <a class="btn bg-white text-gray-800 px-6 py-3 rounded-full font-bold no-underline transition-all duration-300 hover:bg-gray-800 hover:text-white hover:scale-105"
+               th:href="@{/usuario}">Ingresar</a>
+        </div>
+
+        <!-- Opción 2 - Control de Agua -->
+        <div id="option2" class="flex-1 bg-gradient-option2 text-white shadow-md md:shadow-lg transition-all duration-300 flex flex-col items-center justify-center p-8 hover:shadow-xl hover:bg-gradient-option2-hover">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 md:mb-8">Control de Agua</h2>
+            <img th:src="@{/icons/control.svg}" alt="Icono de Control de agua"
+                 class="w-1/5 max-w-[150px] pb-5 md:pb-8">
+            <a class="btn bg-white text-gray-800 px-6 py-3 rounded-full font-bold no-underline transition-all duration-300 hover:bg-gray-800 hover:text-white hover:scale-105"
+               th:href="@{/control}">Ingresar</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

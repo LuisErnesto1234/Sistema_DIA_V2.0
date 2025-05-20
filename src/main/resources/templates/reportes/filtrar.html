@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="recursos/meta.html"></div>
+    <title>Listar por Fechas</title>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out both;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="recursos/aside.html"></div>
+<main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
+    <div th:replace="recursos/navbar.html"></div>
+    <div class="p-6 w-full flex justify-center items-center">
+    <div class="max-w-6xl mx-auto px-4 py-10">
+    <!-- Formulario de Filtro -->
+    <form th:action="@{/reportes}" method="post"
+          class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl mb-10 animate-fade-in-up transition-all duration-700">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Filtrar por Fecha</h2>
+        <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+            <div class="flex flex-col w-full sm:w-auto">
+                <label for="fecha" class="text-gray-700 dark:text-gray-300 font-medium mb-1">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" th:value="${fecha}" required
+                       class="rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-amber-400 focus:outline-none px-4 py-2">
+            </div>
+            <button type="submit"
+                    class="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition-transform transform hover:-translate-y-1 hover:shadow-lg duration-300">
+                Filtrar
+            </button>
+        </div>
+    </form>
+
+    <!-- Tabla de Resultados -->
+    <div class="overflow-x-auto rounded-xl shadow-md animate-fade-in-up delay-100">
+        <table class="w-full text-left text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+            <thead class="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm uppercase tracking-wider">
+            <tr>
+                <th class="px-6 py-3">Usuario</th>
+                <th class="px-6 py-3">Fecha</th>
+                <th class="px-6 py-3">Hora Inicio</th>
+                <th class="px-6 py-3">Hora Fin</th>
+                <th class="px-6 py-3">Minutos</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${controles.totalElements == 0}">
+                <td colspan="5" class="text-center py-6 text-gray-500 dark:text-gray-400">No hay registros para la fecha seleccionada.</td>
+            </tr>
+            <tr th:each="control : ${controles.content}" class="hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors duration-300">
+                <td class="px-6 py-4" th:text="${control.usuario.nombre}"></td>
+                <td class="px-6 py-4" th:text="${control.fechaRegistro}"></td>
+                <td class="px-6 py-4" th:text="${control.horaInicio}"></td>
+                <td class="px-6 py-4" th:text="${control.horaFin}"></td>
+                <td class="px-6 py-4" th:text="${control.minutosUtilizados}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in-up delay-200">
+        <p class="text-gray-600 dark:text-gray-400 text-sm">
+            Página Actual: <span th:text="${paginaActual + 1}" class="font-semibold"></span>
+            de <span th:text="${controles.totalPages}" class="font-semibold"></span>
+        </p>
+
+        <ul class="flex gap-3 text-sm">
+            <li th:if="${paginaActual > 0}">
+                <a th:href="@{/reportes(fecha=${fecha}, page=${paginaActual - 1})}"
+                   class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                    Anterior
+                </a>
+            </li>
+            <li th:if="${paginaActual + 1 < controles.totalPages}">
+                <a th:href="@{/reportes(fecha=${fecha}, page=${paginaActual + 1})}"
+                   class="px-4 py-2 bg-amber-500 text-white rounded-lg shadow hover:bg-amber-600 transition">
+                    Siguiente
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+    </div>
+</main>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Reporte de Control de Agua</title>
+    <style type="text/css">
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #0B5394; text-align: center; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #ccc; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+<h1>Reporte de Control de Agua</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Usuario</th>
+        <th>Fecha</th>
+        <th>Hora Inicio</th>
+        <th>Hora Fin</th>
+        <th>Minutos</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="control : ${controles}">
+        <td th:text="${control.usuarioNombre}"></td>
+        <td th:text="${control.fecha}"></td>
+        <td th:text="${control.horaInicio}"></td>
+        <td th:text="${control.horaFin}"></td>
+        <td th:text="${control.minutosUtilizados}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

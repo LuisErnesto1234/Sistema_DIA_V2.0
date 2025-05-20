@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="recursos/meta.html"></div>
+  <title>Reporte de Control de Agua</title>
+</head>
+<body class="bg-gray-50">
+<div th:replace="recursos/aside.html"></div>
+<main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
+  <div th:replace="recursos/navbar.html"></div>
+  <div class="p-4 md:p-6 lg:p-8">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="px-6 py-4 bg-blue-100 border-b">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-blue-800 flex items-center">
+              <svg class="w-7 h-7 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+              Reporte de Control de Agua
+            </h1>
+            <p class="text-sm text-gray-700 mt-1">
+              Usuario:
+              <span class="font-medium" th:text="${usuario.nombre + ' ' + usuario.apellido}"></span>
+            </p>
+          </div>
+          <div class="bg-blue-200 p-3 rounded-lg">
+            <svg class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left text-gray-700">
+          <thead class="bg-blue-50 text-blue-700 uppercase text-xs font-bold tracking-wide">
+          <tr>
+            <th class="px-6 py-3">Usuario</th>
+            <th class="px-6 py-3">Fecha</th>
+            <th class="px-6 py-3">Hora Inicio</th>
+            <th class="px-6 py-3">Hora Fin</th>
+            <th class="px-6 py-3">Minutos Usados</th>
+          </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+          <tr th:each="control : ${controles}" class="hover:bg-gray-100">
+            <td class="px-6 py-4" th:text="${control.usuario.nombre + ' ' + control.usuario.apellido}"></td>
+            <td class="px-6 py-4" th:text="${control.fechaRegistro}"></td>
+            <td class="px-6 py-4" th:text="${control.horaInicio}"></td>
+            <td class="px-6 py-4" th:text="${control.horaFin}"></td>
+            <td class="px-6 py-4 font-semibold text-blue-600" th:text="${control.minutosUtilizados}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Resumen -->
+      <div class="bg-blue-50 p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center text-blue-800">
+          <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+          <p>
+            <span class="font-semibold">Total registros:</span>
+            <span th:text="${controles.totalElements}"></span> |
+            <span class="font-semibold">Total minutos:</span>
+            <span th:text="${minutosUsados}"></span>
+          </p>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex space-x-2 text-sm font-medium">
+          <a th:if="${paginaActual > 0}" th:href="@{|/reportes/usuario/${usuario.id}?page=${paginaActual - 1}|}"
+             class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Anterior</a>
+          <a th:if="${paginaActual + 1 < controles.totalPages}"
+             th:href="@{|/reportes/usuario/${usuario.id}?page=${paginaActual + 1}|}"
+             class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Siguiente</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>
