@@ -1,31 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="recursos/meta.html"></div>
     <title>Acceso denegado</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center font-['Inter']">
-<div class="max-w-md w-full bg-white p-8 rounded-xl shadow-lg text-center">
-    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
+<body class="bg-gray-50 font-['Inter']">
+<div th:replace="recursos/aside.html"></div>
+<main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
+    <div th:replace="recursos/navbar.html"></div>
+    <div>
+        <div class="p-6 flex items-center justify-center min-h-[calc(100vh-80px)]">
+            <div class="p-8">
+            <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl text-center transform transition-all duration-300 hover:shadow-2xl">
+                <!-- Icono con animación -->
+                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-red-50 mb-6 animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728"/>
+                    </svg>
+                </div>
+
+                <!-- Título y texto -->
+                <h1 class="text-3xl font-bold text-gray-800 mb-3">Acceso denegado</h1>
+                <p class="text-gray-600 mb-8">Lo sentimos, no tienes los permisos necesarios para acceder a este
+                    recurso.</p>
+
+                <!-- Código de error (opcional) -->
+                <div class="bg-gray-100 p-3 rounded-lg mb-8 text-sm font-mono text-gray-700">
+                    Error 403: Forbidden
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="space-y-4">
+                    <form action="javascript:history.back()">
+                        <button type="submit"
+                                class="w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:-translate-y-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Volver atrás
+                        </button>
+                    </form>
+
+                    <a href="/"
+                       class="block text-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        Ir a la página principal
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Acceso denegado</h1>
-    <p class="text-gray-600 mb-6">No tienes permisos para acceder a esta página.</p>
-
-    <form action="javascript:history.back()">
-        <button type="submit" class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Volver a la página anterior
-        </button>
-    </form>
-</div>
+    </div>
+</main>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>

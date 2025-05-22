@@ -9,11 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,57 +20,57 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
+    private final ImagenService imagenService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RolService rolService, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolService rolService, PasswordEncoder passwordEncoder, ImagenService imagenService) {
         this.usuarioRepository = usuarioRepository;
         this.rolService = rolService;
         this.passwordEncoder = passwordEncoder;
+        this.imagenService = imagenService;
     }
 
-    public void guardarUsuario(Usuario usuario) {
+    public void guardarUsuario(Usuario usuario, MultipartFile file) throws IOException {
+        if (usuario.getId() != null) {
+            Usuario usuarioExistente = usuarioRepository.findById(usuario.getId())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-//        if (usuario.getId() != null) {
-//            // Es una actualización
-//            Usuario usuarioExistente = usuarioRepository.findById(usuario.getId())
-//                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-//
-//            if (usuarioExistente != null && usuarioExistente.getFotoPerfil() != null && file.isEmpty()){
-//                usuario.setFotoPerfil(usuarioExistente.getFotoPerfil());
-//            } else if (!file.isEmpty()) {
-//
-//                String rutaBase = System.getProperty("user.dir");
-//
-//                String rutaSubida = rutaBase + File.separator + "uploads" + File.separator + "perfil";
-//
-//                File carpetaSubida = new File(rutaSubida);
-//                if (!carpetaSubida.exists()) {
-//                    boolean crearCarpeta = carpetaSubida.mkdirs();
-//                    if (!crearCarpeta){
-//                        throw new RuntimeException("No se pudo crear la carpeta de subida");
-//                    }
-//                }
-//
-//                String nombreImagen = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-//                Path rutaImagen = Paths.get(rutaSubida + File.separator + nombreImagen);
-//
-//                file.transferTo(rutaImagen.toFile());
-//
-//                usuario.setFotoPerfil("/uploads/perfil/" + nombreImagen);
-//            }
-//
-//            if (file.isEmpty() && usuario.getFotoPerfil() == null){
-//                usuario.setRoles(Set.of(rolService.getRolByNombre("USER").orElseThrow()));
-//                usuario.setFotoPerfil("/uploads/perfil/default.png");
-//            }
-//
-//
-//            if (!usuario.getContrasenia().equals(usuarioExistente.getContrasenia())) {
-//                usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
-//            }
-//        } else {
-//            // Es un nuevo usuario
-//            usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
-//        }
+            // --- FOTO DE PERFIL ---
+            if (file.isEmpty()) {
+                usuario.setFotoPerfil(
+                        usuarioExistente.getFotoPerfil() != null ? usuarioExistente.getFotoPerfil() : "/uploads/perfil/default.png"
+                );
+            } else {
+                usuario.setFotoPerfil(imagenService.guardarImagen(file));
+            }
+
+            // --- CONTRASEÑA ---
+            if (usuario.getContrasenia() == null || usuario.getContrasenia().isBlank()) {
+                usuario.setContrasenia(usuarioExistente.getContrasenia()); // No se cambió
+            } else {
+                // Se ingresó algo nuevo: verificar si es diferente
+                if (!passwordEncoder.matches(usuario.getContrasenia(), usuarioExistente.getContrasenia())) {
+                    usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+                } else {
+                    // Ya es igual (raro si está encriptada), pero por seguridad...
+                    usuario.setContrasenia(usuarioExistente.getContrasenia());
+                }
+            }
+
+        } else {
+            // Nuevo usuario
+            usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+            if (file.isEmpty()) {
+                usuario.setFotoPerfil("/uploads/perfil/default.png");
+            } else {
+                usuario.setFotoPerfil(imagenService.guardarImagen(file));
+            }
+        }
+
+        // ROL
+        Rol rolUser = rolService.getRolByNombre("USER")
+                .orElseThrow(() -> new RuntimeException("Rol USER no encontrado"));
+        usuario.setEstado("no");
+        usuario.setRoles(Set.of(rolUser));
 
         usuarioRepository.save(usuario);
     }
@@ -116,35 +112,36 @@ public class UsuarioService {
         return usuarioRepository.findByCorreo(correo);
     }
 
-    public void agregarRolAdmin(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+//    public void agregarRolAdmin(Long usuarioId) {
+//        Usuario usuario = usuarioRepository.findById(usuarioId)
+//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+//
+//        Rol rolAdmin = rolService.getRolByNombre("ADMIN")
+//                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
+//
+//        usuario.getRoles().add(rolAdmin);
+//        usuarioRepository.save(usuario);
+//    }
 
-        Rol rolAdmin = rolService.getRolByNombre("ADMIN")
-                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
+//    public void removerRolAdmin(Long usuarioId) {
+//        Usuario usuario = usuarioRepository.findById(usuarioId)
+//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+//
+//        Rol rolAdmin = rolService.getRolByNombre("ADMIN")
+//                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
+//
+//        usuario.getRoles().removeIf(r -> r.getNombre().equals("ADMIN"));
+//        usuarioRepository.save(usuario);
+//    }
 
-        usuario.getRoles().add(rolAdmin);
-        usuarioRepository.save(usuario);
-    }
+//    public void registrarUsuario(Usuario usuario) {
+//        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+//
+//        Rol rolUser = rolService.getRolByNombre("USER")
+//                .orElseThrow(() -> new RuntimeException("Rol USER no encontrado"));
+//
+//        usuario.setRoles(Set.of(rolUser));
+//        usuarioRepository.save(usuario);
+//    }
 
-    public void removerRolAdmin(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        Rol rolAdmin = rolService.getRolByNombre("ADMIN")
-                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
-
-        usuario.getRoles().removeIf(r -> r.getNombre().equals("ADMIN"));
-        usuarioRepository.save(usuario);
-    }
-
-    public void registrarUsuario(Usuario usuario) {
-        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
-
-        Rol rolUser = rolService.getRolByNombre("USER")
-                .orElseThrow(() -> new RuntimeException("Rol USER no encontrado"));
-
-        usuario.setRoles(Set.of(rolUser));
-        usuarioRepository.save(usuario);
-    }
 }

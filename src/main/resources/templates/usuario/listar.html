@@ -8,9 +8,9 @@
 <div th:replace="recursos/aside.html"></div>
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
     <div th:replace="recursos/navbar.html"></div>
-    <div class="p-4 sm:p-6">
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-            <!-- Cabecera mejorada -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover-scale transition-all duration-200">
+        <!-- Cabecera mejorada -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-4 bg-gradient-to-r from-orange-600 to-amber-600 text-white">
                 <div class="mb-4 sm:mb-0">
                     <h3 class="text-2xl font-bold tracking-tight">Gestión de Usuarios</h3>
@@ -169,7 +169,6 @@
             </div>
         </div>
     </div>
-
 </main>
 <script th:src="@{/js/main.js}"></script>
 </body>

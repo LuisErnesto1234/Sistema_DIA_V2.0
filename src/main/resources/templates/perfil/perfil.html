@@ -40,7 +40,8 @@
                                 </button>
                             </div>
                             <h2 class="text-xl font-semibold text-gray-800" th:text="${usuario.nombre}"></h2>
-                            <p class="text-gray-500">Miembro desde: Enero 2023</p>
+                            <p class="text-gray-500">Minutos acumulados: <span th:text="${usuario.minutosAcumulados}"></span></p>
+                            <p class="text-gray-500">Minutos Semana: <span th:text="${usuario.minutosSemana}"></span></p>
                         </div>
 
                         <!-- Sección de información -->
@@ -89,18 +90,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Pie de página -->
-                <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
-                    <div class="flex justify-end">
-                        <button class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 mr-3">
-                            Cancelar
-                        </button>
-                        <button class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
-                            Guardar cambios
-                        </button>
                     </div>
                 </div>
             </div>

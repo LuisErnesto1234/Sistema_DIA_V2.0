@@ -8,9 +8,8 @@
 <div th:replace="recursos/aside.html"></div>
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
     <div th:replace="recursos/navbar.html"></div>
-
-    <div class="p-6">
-        <div class="bg-white rounded-2xl shadow-xl max-w-4xl mx-auto">
+    <div>
+        <div class="p-6 flex items-center justify-center min-h-[calc(100vh-80px)]">
             <div class="p-8">
                 <h2 class="text-3xl font-bold text-center text-blue-800 mb-8" th:text="${usuario.id == null ? 'Nuevo Usuario' : 'Editar Usuario'}"></h2>
 
@@ -90,6 +89,7 @@
                             <label for="correo" class="block mb-2 text-sm font-medium text-blue-700">Correo</label>
                             <div class="relative">
                                 <input id="correo" type="email" placeholder="Ingresa el correo del usuario"
+                                       th:read-only:="${usuario.id != null}"
                                        th:field="*{correo}"
                                        class="w-full pl-11 pr-4 py-3 border-2 rounded-xl bg-white text-sm
                                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
@@ -104,13 +104,13 @@
                         </div>
 
                         <!--Contraseña-->
-                        <div>
+                            <div>
                             <label for="contra" class="block mb-2 text-sm font-medium text-blue-700">Contraseña</label>
                             <div class="relative">
-                                <input id="contra" type="password" placeholder="Ingresa la contraseña del usuario"
+                                <input id="contra" type="password" placeholder="Dejar en blanco para mantener la actual"
                                        th:field="*{contrasenia}"
                                        class="w-full pl-11 pr-4 py-3 border-2 rounded-xl bg-white text-sm
-                                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500 pointer-events-none"
                                      fill="#2563eb" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <path d="M12,6a1,1,0,0,0-1,1v5a1,1,0,0,0,.293.707l3,3a1,1,0,0,0,1.414-1.414L13,11.586V7A1,1,0,0,0,12,6Z
@@ -118,7 +118,6 @@
                                 a9.99,9.99,0,1,1-2.835,7.878A.982.982,0,0,0,1,12a1.007,1.007,0,0,0-1,1.1,12,12,0,1,0,23.808-2.969Z"/>
                                 </svg>
                             </div>
-                            <p class="text-sm text-red-600 mt-1" th:if="${#fields.hasErrors('minutosSemana')}" th:errors="*{minutosSemana}"></p>
                         </div>
 
                         <!--Foto perfil-->

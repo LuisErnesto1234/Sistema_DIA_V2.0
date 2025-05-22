@@ -3,12 +3,14 @@ package com.spring.udemy.controlagua.config;
 import com.spring.udemy.controlagua.service.UsuarioDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SeguridadConfig {
 
     private final UsuarioDetailsService usuarioDetailsService;
@@ -23,16 +25,17 @@ public class SeguridadConfig {
                 authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/control/**").hasRole("ADMIN")
-                        .requestMatchers("/usuario/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/login", "/registro","/css/**","/", "/js/**", "/icons/**", "/images/**").permitAll()
+                        .requestMatchers("/usuario/nuevo").hasRole("ADMIN")
+                        .requestMatchers("/usuario").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/login","/css/**","/", "/js/**", "/icons/**", "/images/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginPage("/login")
                         .defaultSuccessUrl("/inicio", true)
                         .permitAll())
-//                .rememberMe(remember -> remember
-//                        .key("Virtual2023") // Clave secreta para cifrar el token
-//                        .tokenValiditySeconds(30 * 24 * 60 * 60)) // 30 días en segundos
+                .rememberMe(remember -> remember
+                        .key("Virtual2023") // Clave secreta para cifrar el token
+                        .tokenValiditySeconds(30 * 24 * 60 * 60)) // 30 días en segundos
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")

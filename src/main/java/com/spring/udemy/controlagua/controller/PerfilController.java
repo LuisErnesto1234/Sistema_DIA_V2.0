@@ -36,26 +36,24 @@ public class PerfilController {
         return "perfil/editar";
     }
 
-    @PostMapping("/editar")
-    public String actualizarPerfil(@ModelAttribute Usuario usuarioForm, Authentication auth, RedirectAttributes attr) {
-        String correo = auth.getName();
-        Usuario usuarioEnSesion = usuarioService.buscarUsuarioPorCorreo(correo).orElseThrow();
-
-        // Verifica que sea el mismo usuario
-        if (!usuarioForm.getId().equals(usuarioEnSesion.getId())) {
-            attr.addFlashAttribute("error", "No puedes editar el perfil de otro usuario.");
-            return "redirect:/perfil";
-        }
-
-        // Actualiza los campos permitidos
-        usuarioEnSesion.setNombre(usuarioForm.getNombre());
-        usuarioEnSesion.setApellido(usuarioForm.getApellido());
-        // (No cambies el correo o contraseña aquí si no lo deseas)
-
-        usuarioService.guardarUsuario(usuarioEnSesion);
-        attr.addFlashAttribute("success", "Perfil actualizado correctamente.");
-        return "redirect:/perfil";
-    }
-
-
+//    @PostMapping("/editar")
+//    public String actualizarPerfil(@ModelAttribute Usuario usuarioForm, Authentication auth, RedirectAttributes attr) {
+//        String correo = auth.getName();
+//        Usuario usuarioEnSesion = usuarioService.buscarUsuarioPorCorreo(correo).orElseThrow();
+//
+//        // Verifica que sea el mismo usuario
+//        if (!usuarioForm.getId().equals(usuarioEnSesion.getId())) {
+//            attr.addFlashAttribute("error", "No puedes editar el perfil de otro usuario.");
+//            return "redirect:/perfil";
+//        }
+//
+//        // Actualiza los campos permitidos
+//        usuarioEnSesion.setNombre(usuarioForm.getNombre());
+//        usuarioEnSesion.setApellido(usuarioForm.getApellido());
+//        // (No cambies el correo o contraseña aquí si no lo deseas)
+//
+//        usuarioService.guardarUsuario(usuarioEnSesion);
+//        attr.addFlashAttribute("success", "Perfil actualizado correctamente.");
+//        return "redirect:/perfil";
+//    }
 }

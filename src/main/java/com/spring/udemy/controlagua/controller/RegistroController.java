@@ -26,24 +26,24 @@ public class RegistroController {
         this.authenticationManager = authenticationManager;
     }
 
-    @GetMapping
-    public String mostrarFormularioRegistro(Model model) {
-        model.addAttribute("usuario", new Usuario());
-        return "registro";
-    }
+//    @GetMapping
+//    public String mostrarFormularioRegistro(Model model) {
+//        model.addAttribute("usuario", new Usuario());
+//        return "registro";
+//    }
 
-    @PostMapping
-    public String procesarRegistro(@ModelAttribute("usuario") Usuario usuario) {
-        usuarioService.registrarUsuario(usuario);
-
-        // Autenticación automática después del registro
-        UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(usuario.getCorreo(), usuario.getContrasenia());
-
-        Authentication auth = authenticationManager.authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        return "redirect:/redirigir"; // Redirige a la página adecuada según su rol
-    }
+//    @PostMapping
+//    public String procesarRegistro(@ModelAttribute("usuario") Usuario usuario) {
+//        usuarioService.registrarUsuario(usuario);
+//
+//        // Autenticación automática después del registro
+//        UsernamePasswordAuthenticationToken authToken =
+//                new UsernamePasswordAuthenticationToken(usuario.getCorreo(), usuario.getContrasenia());
+//
+//        Authentication auth = authenticationManager.authenticate(authToken);
+//        SecurityContextHolder.getContext().setAuthentication(auth);
+//
+//        return "redirect:/redirigir"; // Redirige a la página adecuada según su rol
+//    }
 }
 

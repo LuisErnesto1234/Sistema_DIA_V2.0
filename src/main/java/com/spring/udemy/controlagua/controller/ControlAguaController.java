@@ -108,7 +108,7 @@ public class ControlAguaController {
         controlAgua.setMinutosUtilizados(minutosUtilizados);
 
         //TODO Guardar el Control
-        attr.addFlashAttribute("success", "Control aguadado correctamente.");
+        attr.addFlashAttribute("success", "Control guardado correctamente.");
         controlAguaService.guardarControlAgua(controlAgua);
         return "redirect:/control";
     }
