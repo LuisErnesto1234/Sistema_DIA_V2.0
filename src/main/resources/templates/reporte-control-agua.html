@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Reporte Control Agua</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; text-align: center; }
+        .filtro { margin-bottom: 20px; font-style: italic; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .footer { margin-top: 30px; text-align: right; font-size: 0.8em; color: #666; }
+    </style>
+</head>
+<body>
+<h1>Reporte de Control de Agua</h1>
+<div class="filtro"><span th:text="${filtro}"></span></div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Usuario</th>
+        <th>Fecha</th>
+        <th>Hora Inicio</th>
+        <th>Hora Fin</th>
+        <th>MInutos Utilizados</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="control : ${controles}">
+        <td th:text="${#strings.concat(control.usuario.nombre, ' ', control.usuario.apellido)}"></td>
+        <td th:text="${#temporals.format(control.fechaRegistro, 'dd/MM/yyyy')}"></td>
+        <td th:text="${#strings.toLowerCase(#temporals.format(control.horaInicio, 'hh:mm a'))}"></td>
+        <td th:text="${#strings.toLowerCase(#temporals.format(control.horaFin, 'hh:mm a'))}"></td>
+        <td th:text="${control.minutosUtilizados}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="footer">
+    Generado el: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+</div>
+</body>
+</html>

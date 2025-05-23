@@ -100,25 +100,25 @@ public class UsuarioController {
         return "redirect:/usuario";
     }
 
-    @GetMapping("/pdf/{id}")
-    public ResponseEntity<byte[]> generatePdf(@PathVariable Long id, Model model) {
-        Usuario usuario = usuarioService.buscarUsuarioPorId(id).orElseThrow();
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("usuario", usuario);
-
-        model.addAttribute("usuario", usuario);
-
-        byte[] pdfBytes = pdfGeneratorService.generatePdf("usuario-pdf", data);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("filename", "usuario_" + usuario.getNombre() + ".pdf");
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(pdfBytes);
-    }
+//    @GetMapping("/pdf/{id}")
+//    public ResponseEntity<byte[]> generatePdf(@PathVariable Long id, Model model) {
+//        Usuario usuario = usuarioService.buscarUsuarioPorId(id).orElseThrow();
+//
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("usuario", usuario);
+//
+//        model.addAttribute("usuario", usuario);
+//
+//        byte[] pdfBytes = pdfGeneratorService.generatePdf("usuario-pdf", data);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_PDF);
+//        headers.setContentDispositionFormData("filename", "usuario_" + usuario.getNombre() + ".pdf");
+//        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+//
+//        return ResponseEntity.ok()
+//                .headers(headers)
+//                .body(pdfBytes);
+//    }
 
 }

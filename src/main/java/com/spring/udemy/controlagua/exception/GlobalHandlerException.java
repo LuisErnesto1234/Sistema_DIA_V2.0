@@ -28,10 +28,10 @@ public class GlobalHandlerException {
         return "error/integridad";
     }
 
-    @ExceptionHandler(Exception.class)
-    public String manejarExcepcionGeneral(Exception ex, Model model) {
-        model.addAttribute("error", "Ocurrió un error inesperado");
-        model.addAttribute("mensaje", ex.getMessage());
-        return "error/general";
-    }
+//    @ExceptionHandler(Exception.class)
+//    public String manejarExcepcionGeneral(Exception ex, Model model) {
+//        model.addAttribute("error", "Ocurrió un error inesperado");
+//        model.addAttribute("mensaje", ex.getMessage());
+//        return "error/general";
+//    }
 }

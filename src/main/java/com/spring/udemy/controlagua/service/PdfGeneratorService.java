@@ -5,7 +5,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
 
 @Service
 public class PdfGeneratorService {
@@ -16,20 +15,18 @@ public class PdfGeneratorService {
         this.templateEngine = templateEngine;
     }
 
-    public byte[] generatePdf(String templateName, Map<String, Object> data) {
-        Context context = new Context();
-        context.setVariables(data);
-
+    public byte[] generatePdf(String templateName, Context context) throws Exception {
+        // Procesar la plantilla Thymeleaf a HTML
         String htmlContent = templateEngine.process(templateName, context);
 
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            ITextRenderer renderer = new ITextRenderer();
-            renderer.setDocumentFromString(htmlContent);
-            renderer.layout();
-            renderer.createPDF(outputStream);
-            return outputStream.toByteArray();
-        } catch (Exception e) {
-            throw new RuntimeException("Error al generar PDF", e);
-        }
+        // Convertir HTML a PDF
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(htmlContent);
+        renderer.layout();
+        renderer.createPDF(outputStream);
+        outputStream.close();
+
+        return outputStream.toByteArray();
     }
 }
