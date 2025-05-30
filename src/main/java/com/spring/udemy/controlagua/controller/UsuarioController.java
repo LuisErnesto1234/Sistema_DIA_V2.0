@@ -1,18 +1,13 @@
 package com.spring.udemy.controlagua.controller;
 
 import com.spring.udemy.controlagua.model.Usuario;
-import com.spring.udemy.controlagua.service.PdfGeneratorService;
 import com.spring.udemy.controlagua.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,19 +18,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/usuario")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private final PdfGeneratorService pdfGeneratorService;
 
-    public UsuarioController(UsuarioService usuarioService, PdfGeneratorService pdfGeneratorService) {
+    public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-        this.pdfGeneratorService = pdfGeneratorService;
     }
 
     @GetMapping
@@ -85,6 +76,7 @@ public class UsuarioController {
                 }
             }
         }
+
         return "redirect:/usuario";
     }
 
@@ -96,29 +88,6 @@ public class UsuarioController {
             return "usuario/formulario";
         }
         usuarioService.guardarUsuario(usuario, file);
-
         return "redirect:/usuario";
     }
-
-//    @GetMapping("/pdf/{id}")
-//    public ResponseEntity<byte[]> generatePdf(@PathVariable Long id, Model model) {
-//        Usuario usuario = usuarioService.buscarUsuarioPorId(id).orElseThrow();
-//
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("usuario", usuario);
-//
-//        model.addAttribute("usuario", usuario);
-//
-//        byte[] pdfBytes = pdfGeneratorService.generatePdf("usuario-pdf", data);
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_PDF);
-//        headers.setContentDispositionFormData("filename", "usuario_" + usuario.getNombre() + ".pdf");
-//        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-//
-//        return ResponseEntity.ok()
-//                .headers(headers)
-//                .body(pdfBytes);
-//    }
-
 }

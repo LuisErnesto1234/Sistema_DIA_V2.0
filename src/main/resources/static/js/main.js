@@ -5,17 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const main = document.querySelector('.main');
 
     // Verificar el estado guardado al cargar la página
-    const isSidebarHidden = localStorage.getItem('sidebarHidden') === 'true';
+    const isSidebarShown = localStorage.getItem('sidebarShown') === 'true';
 
-    // Aplicar el estado guardado
-    if (isSidebarHidden) {
-        main.classList.add('active', 'main-expanded');
-        sidebarOverlay.classList.add('hidden');
-        sidebarMenu.classList.add('-translate-x-full');
-    } else {
+    // Aplicar el estado guardado (ahora oculto por defecto)
+    if (isSidebarShown) {
         main.classList.remove('active', 'main-expanded');
         sidebarOverlay.classList.remove('hidden');
         sidebarMenu.classList.remove('-translate-x-full');
+    } else {
+        main.classList.add('active', 'main-expanded');
+        sidebarOverlay.classList.add('hidden');
+        sidebarMenu.classList.add('-translate-x-full');
     }
 
     sidebarToggle.addEventListener('click', function(e) {
@@ -25,9 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebarOverlay.classList.toggle('hidden');
         sidebarMenu.classList.toggle('-translate-x-full');
 
-        // Guardar el estado en localStorage
-        const isNowHidden = sidebarMenu.classList.contains('-translate-x-full');
-        localStorage.setItem('sidebarHidden', isNowHidden);
+        // Guardar el estado en localStorage (ahora guardamos cuando está visible)
+        const isNowShown = !sidebarMenu.classList.contains('-translate-x-full');
+        localStorage.setItem('sidebarShown', isNowShown);
     });
 
     sidebarOverlay.addEventListener('click', function(e) {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebarMenu.classList.add('-translate-x-full');
 
         // Guardar el estado en localStorage
-        localStorage.setItem('sidebarHidden', true);
+        localStorage.setItem('sidebarShown', false);
     });
 
     document.querySelectorAll('.sidebar-dropdown-toggle').forEach(function(item) {

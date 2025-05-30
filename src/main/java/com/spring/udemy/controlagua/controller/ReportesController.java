@@ -67,8 +67,13 @@ public class ReportesController {
 
         Pageable paginable = PageRequest.of(page, size, Sort.by("fechaRegistro").descending());
         Page<ControlAgua> controlAguas = controlAguaService.buscarControlPorIdUsuario(id, paginable);
-        model.addAttribute("controles", controlAguas);
+        model.addAttribute("control", controlAguas);
         model.addAttribute("usuario", usuarioService.buscarUsuarioPorId(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+        // En tu controlador
+        int startPage = Math.max(0, page - 1);
+        int endPage = Math.min(page + 1, controlAguas.getTotalPages() - 1);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         model.addAttribute("paginaActual", page);
         model.addAttribute("minutosUsados", controlAguaService.controlAguaList().stream().
                 filter(c -> c.getUsuario().getId().equals(id)).

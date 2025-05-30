@@ -4,6 +4,7 @@ import com.spring.udemy.controlagua.model.Rol;
 import com.spring.udemy.controlagua.repository.RolRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +18,10 @@ public class RolService {
 
     public Optional<Rol> getRolByNombre(String nombre){
         return rolRepository.findByNombre(nombre);
+    }
+
+    public List<Rol> listarRoles(){
+        return rolRepository.findAll();
     }
 
 }

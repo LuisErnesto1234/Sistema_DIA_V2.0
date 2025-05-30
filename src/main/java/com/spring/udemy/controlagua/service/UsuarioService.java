@@ -9,14 +9,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 public class UsuarioService {
-
     private final UsuarioRepository usuarioRepository;
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
@@ -35,12 +35,12 @@ public class UsuarioService {
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
             // --- FOTO DE PERFIL ---
-            if (file.isEmpty()) {
+            if (file.isEmpty()){ //Imagen vacia {
                 usuario.setFotoPerfil(
                         usuarioExistente.getFotoPerfil() != null ? usuarioExistente.getFotoPerfil() : "/uploads/perfil/default.png"
                 );
-            } else {
-                usuario.setFotoPerfil(imagenService.guardarImagen(file));
+            } else {//Imagen subida
+                usuario.setFotoPerfil(imagenService.guardarImagen(file, usuarioExistente.getFotoPerfil()));
             }
 
             // --- CONTRASEÑA ---
@@ -55,6 +55,9 @@ public class UsuarioService {
                     usuario.setContrasenia(usuarioExistente.getContrasenia());
                 }
             }
+            //En el caso de que sea una edición, mantenemos los datos del usuario actual
+            usuario.setRoles(usuarioExistente.getRoles());
+            usuario.setEstado(usuarioExistente.getEstado());
 
         } else {
             // Nuevo usuario
@@ -62,15 +65,14 @@ public class UsuarioService {
             if (file.isEmpty()) {
                 usuario.setFotoPerfil("/uploads/perfil/default.png");
             } else {
-                usuario.setFotoPerfil(imagenService.guardarImagen(file));
+                usuario.setFotoPerfil(imagenService.guardarImagen(file, null));
             }
+            // ROL
+            Rol rolUser = rolService.getRolByNombre("USER")
+                    .orElseThrow(() -> new RuntimeException("Rol USER no encontrado"));
+            usuario.setRoles(Set.of(rolUser));
+            usuario.setEstado("no");
         }
-
-        // ROL
-        Rol rolUser = rolService.getRolByNombre("USER")
-                .orElseThrow(() -> new RuntimeException("Rol USER no encontrado"));
-        usuario.setEstado("no");
-        usuario.setRoles(Set.of(rolUser));
 
         usuarioRepository.save(usuario);
     }

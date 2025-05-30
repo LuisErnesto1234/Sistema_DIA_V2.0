@@ -5,12 +5,12 @@
     <title>Formulario Control</title>
 </head>
 <body>
-<div th:replace="recursos/aside.html"></div>
+<div th:replace="recursos/aside"></div>
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
     <div th:replace="recursos/navbar.html"></div>
-    <div class="p-6">
+    <div class="p-2 md:p-6 lg:p-8">
         <div class="bg-white rounded-2xl shadow-xl max-w-4xl mx-auto">
-            <div class="p-8">
+            <div class="p-4 md:p-6 lg:p-8">
                 <h2 class="text-3xl font-bold text-center text-blue-800 mb-8" th:text="${control.id == null ? 'Controlar' : 'Editar Control'}"></h2>
 
                 <form th:action="@{/control/guardar}" th:object="${control}" method="post" enctype="multipart/form-data" class="space-y-8">

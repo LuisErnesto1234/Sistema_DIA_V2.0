@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <div th:replace="recursos/meta.html"></div>
+    <div th:replace="recursos/meta"></div>
     <title>Espera para juntar agua</title>
 </head>
 <body>
-<div th:replace="recursos/aside.html"></div>
+<div th:replace="recursos/aside"></div>
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
-    <div th:replace="recursos/navbar.html"></div>
-    <div class="min-h-screen bg-gray-50 p-6">
+    <div th:replace="recursos/navbar"></div>
+    <div class="min-h-screen bg-gray-50 p-2 sm:p-6">
         <div class="max-w-7xl mx-auto">
             <!-- Contenedor principal -->
             <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
                 <!-- Encabezado -->
                 <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4">
-                    <h1 class="text-2xl font-bold text-white">Gestión de Turnos de Agua</h1>
-                    <p class="text-blue-100 mt-1">Administración de usuarios en espera para usar el grifo</p>
+                    <h1 class="text-2xl font-bold text-white text-center sm:text-start">Gestión de Turnos de Agua</h1>
+                    <p class="text-blue-100 mt-1 text-center text-md sm:text-start">Administración de usuarios en espera para usar el pilón de agua.</p>
                 </div>
 
                 <!-- Mensaje de éxito -->
@@ -66,7 +66,7 @@
                 </div>
 
                 <!-- Contenido principal -->
-                <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="p-2 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:p-6">
                     <!-- Columna izquierda -->
                     <div class="space-y-6">
                         <!-- Usuario actual -->
@@ -97,7 +97,7 @@
                         <!-- Sin usuario actual -->
                         <div th:if="${usuarioActual == null}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             <div class="bg-gradient-to-r from-amber-500 to-yellow-500 px-4 py-3">
-                                <h2 class="text-lg font-semibold text-white">Estado del grifo</h2>
+                                <h2 class="text-lg font-semibold text-white text-center sm:text-start">Estado del pilon</h2>
                             </div>
                             <div class="p-4">
                                 <div class="flex items-start">
@@ -107,7 +107,7 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <p class="text-lg font-medium text-gray-800">No hay nadie usando el grifo</p>
+                                        <p class="text-md font-medium text-gray-800 sm:text-lg">No hay nadie juntado agua.</p>
                                         <p class="text-sm text-gray-600 mt-1">Puedes agregar usuarios a la lista de espera</p>
                                     </div>
                                 </div>
@@ -129,10 +129,10 @@
                         <!-- Formulario para poner en espera -->
                         <div th:if="${!usuarios.isEmpty()}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             <div class="bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-3">
-                                <h3 class="text-lg font-semibold text-white">Agregar a la espera</h3>
+                                <h3 class="text-lg font-semibold text-white text-center sm:text-start">Agregar a la espera</h3>
                             </div>
                             <div class="p-4">
-                                <p class="text-sm text-gray-600 mb-4">Selecciona un usuario para agregar a la lista</p>
+                                <p class="text-sm text-gray-600 mb-4">Selecciona un usuario para agregar a la lista de espera del pilón.</p>
                                 <form th:action="@{/espera/registrar}" method="post" class="space-y-4">
                                     <div>
                                         <label for="juntar" class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
@@ -154,6 +154,16 @@
                     <!-- Columna derecha -->
                     <div class="space-y-6">
                         <!-- Lista de espera -->
+                        <div th:if="${esperaUsuarios.size() == 1 || esperaUsuarios.isEmpty()}"
+                             class="flex flex-col items-center justify-center bg-white h-full rounded-xl shadow-md border border-gray-100 p-8 text-center
+            transition-all duration-300 hover:shadow-lg hover:border-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <h5 class="text-lg font-medium text-gray-700 mb-2">Lista de espera vacía</h5>
+                            <p class="text-gray-500 max-w-md">Aquí aparecerán los usuarios en espera por el pilón cuando sean agregados.</p>
+                        </div>
+
                         <div th:if="${esperaUsuarios.size() >= 2}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             <div class="bg-gradient-to-r from-purple-500 to-violet-600 px-4 py-3">
                                 <div class="flex items-center justify-between">

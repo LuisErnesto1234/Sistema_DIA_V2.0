@@ -1,107 +1,165 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tour con Driver.js</title>
-    <!-- Driver.js CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css"/>
-    <style>
-        .feature {
-            padding: 20px;
-            margin: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 15px;
-            margin: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="icon" th:href="@{/images/logofinal.png}" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link th:href="@{/styles/style.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Document</title>
 </head>
 <body>
-<h1 id="titulo-principal">Mi Sistema Web</h1>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <div class="container mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!---->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-4 bg-gradient-to-r from-orange-600 to-amber-600 text-white">
+                    <div class="mb-4 sm:mb-0">
+                        <h3 class="text-2xl font-bold tracking-tight">Gestión de Usuarios</h3>
+                        <p class="text-sm text-orange-100 opacity-90 mt-1">Administra todos los usuarios registrados en el sistema</p>
+                    </div>
+                    <a href="/usuario/nuevo" class="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-rose-600 to-amber-500 p-0.5 font-medium text-white hover:shadow-lg transition-all duration-300">
+                <span class="relative rounded-md bg-rose-600 px-5 py-2.5 transition-all duration-300 group-hover:bg-opacity-0">
+                    <span class="flex items-center">
+                        <span class="mr-2">Agregar Usuario</span>
+                        <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
+                            <path d="M7.5 2V13M2 7.5H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </span>
+                    </a>
+                </div>
+                <!-- Barra de herramientas -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 py-3 bg-gray-50 border-b border-gray-200 gap-3">
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input type="text"
+                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm"
+                               placeholder="Buscar usuarios por nombre"
+                        >
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                            <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                            </svg>
+                            Filtros
+                        </button>
+                        <button class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                            <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Exportar
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellidos</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min. Acumulados</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min. Semana</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Historial</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
 
-<button id="iniciar-tour">Iniciar Tour Guiado</button>
+                        <tr th:each="usuario : ${usuarios.content}" class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${usuario.id}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full" th:src="${usuario.fotoPerfil}" alt="Imagen">
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${usuario.nombre}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${usuario.apellido}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800" th:text="${usuario.minutosAcumulados}"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" th:text="${usuario.minutosSemana}"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span th:each="rol : ${usuario.roles}"
+                                      class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                      th:classappend="${rol.nombre == 'ADMIN'} ? 'bg-purple-100 text-purple-800' :
+                     (${rol.nombre == 'USER'} ? 'bg-green-100 text-green-800' :
+                     'bg-gray-100 text-gray-800')"
+                                      th:text="${rol.nombre}"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <button class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a th:href="@{/usuario/editar/{id}(id=${usuario.id})}"
+                                        class="text-green-600 hover:text-green-900 mr-3">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a th:href="@{/usuario/eliminar/{id}(id=${usuario.id})}"
+                                   onclick="return confirm('¿Seguro que quieres eliminar este usuario?')"
+                                        class="text-red-600 hover:text-red-900">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200">
+                    <div class="mb-4 sm:mb-0">
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium" th:text="${usuarios.number * usuarios.size + 1}"></span> a
+                            <span class="font-medium" th:text="${(usuarios.number * usuarios.size) + usuarios.numberOfElements}"></span> de
+                            <span class="font-medium" th:text="${usuarios.totalElements}"></span> resultados
+                        </p>
+                    </div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <a th:href="@{/usuario(page=${usuarios.number > 0 ? usuarios.number - 1 : 0})}"
+                           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                           th:classappend="${usuarios.number == 0} ? 'opacity-50 cursor-not-allowed'">
+                            <span class="sr-only">Anterior</span>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
 
-<div class="feature" id="feature-1">
-    <h2>Funcionalidad 1</h2>
-    <p>Esta es la primera característica importante de tu sistema.</p>
+                        <a th:each="i : ${#numbers.sequence(0, usuarios.totalPages - 1)}"
+                           th:href="@{/usuario(page=${i})}"
+                           th:text="${i + 1}"
+                           class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium"
+                           th:classappend="${i == usuarios.number} ? 'z-10 bg-amber-50 border-amber-500 text-amber-600' : 'text-gray-500 hover:bg-gray-50'">
+                        </a>
+
+                        <a th:href="@{/usuario(page=${usuarios.number < usuarios.totalPages - 1 ? usuarios.number + 1 : usuarios.totalPages - 1})}"
+                           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                           th:classappend="${usuarios.number == usuarios.totalPages - 1} ? 'opacity-50 cursor-not-allowed'">
+                            <span class="sr-only">Siguiente</span>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="feature" id="feature-2">
-    <h2>Funcionalidad 2</h2>
-    <p>Aquí puedes explicar otra parte clave de tu aplicación.</p>
-</div>
-
-<div class="feature" id="feature-3">
-    <h2>Configuración</h2>
-    <p>Este apartado permite ajustar las preferencias del sistema.</p>
-</div>
-
-<!-- Driver.js JS -->
-<script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.min.js"></script>
-<script>
-    const driver = window.driver.js.driver;
-
-    const driverObj = driver();
-    document.getElementById('iniciar-tour').addEventListener('click', function() {
-
-
-        const driver = new Driver({
-            // Opciones globales (opcional)
-            animate: true,
-            opacity: 0.75,
-            padding: 10,
-            allowClose: true,
-            overlayClickNext: false,
-            doneBtnText: 'Finalizar',
-            closeBtnText: 'Cerrar',
-            nextBtnText: 'Siguiente',
-            prevBtnText: 'Anterior',
-        });
-
-        // Definir los pasos del tour
-        driver.defineSteps([
-            {
-                element: '#titulo-principal',
-                popover: {
-                    title: 'Bienvenido a tu sistema',
-                    description: 'Este es el título principal de tu aplicación',
-                    position: 'bottom'
-                }
-            },
-            {
-                element: '#feature-1',
-                popover: {
-                    title: 'Funcionalidad Principal',
-                    description: 'Aquí puedes explicar qué hace esta sección',
-                    position: 'right'
-                }
-            },
-            {
-                element: '#feature-2',
-                popover: {
-                    title: 'Otra Característica',
-                    description: 'Descripción detallada de esta función',
-                    position: 'top'
-                }
-            },
-            {
-                element: '#feature-3',
-                popover: {
-                    title: 'Configuración',
-                    description: 'Personaliza el sistema a tu gusto',
-                    position: 'left'
-                }
-            }
-        ]);
-
-        // Iniciar el tour
-        driver.start();
-    });
-</script>
 </body>
 </html>

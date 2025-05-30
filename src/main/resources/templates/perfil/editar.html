@@ -1,167 +1,277 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Editar Perfil</title>
+    <div th:replace="recursos/meta.html"></div>
+    <title>Editar Perfil - DIA</title>
 </head>
 <body class="bg-gray-50">
-<div th:replace="recursos/aside.html"></div>
+<div th:replace="recursos/aside"></div>
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
-    <div th:replace="recursos/navbar.html"></div>
-    <div class="p-4 sm:p-6">
+    <div th:replace="recursos/navbar"></div>
+    <div class="p-1 sm:p-6">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-            <div class="container mx-auto py-8">
-<!-- Vista de Edición -->
-<div x-show="editMode" x-transition class="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
-    <!-- ... código vista edición ... -->
-    <div class="container mx-auto">
-        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
-            <!-- Encabezado -->
-            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-bold">Editar Perfil</h1>
-                    <button class="text-white hover:text-gray-200 transition">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
+                <!-- Vista de Edición -->
+                <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <!-- ... código vista edición ... -->
+                    <div class="container mx-auto">
+                        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                            <!-- Encabezado -->
+                            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
+                                <div class="flex justify-between items-center">
+                                    <h1 class="text-2xl font-bold">Editar Perfil</h1>
+                                    <button class="text-white hover:text-gray-200 transition"
+                                            onclick="window.history.back();">
+                                        <i class="fas fa-times text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Formulario de edición -->
+                            <form class="p-2 sm:p-6" th:action="@{/perfil}" method="post" th:object="${usuario}"  enctype="multipart/form-data">
+                                <input type="hidden" th:field="*{id}"/>
+                                <input type="hidden" th:field="*{minutosSemana}"/>
+                                <input type="hidden" th:field="*{minutosAcumulados}"/>
+                                <div class="flex flex-col md:flex-row gap-8">
+                                    <!-- Sección de foto -->
+                                    <div class="w-full md:w-1/3 flex flex-col items-center">
+                                        <div class="relative mb-4 group">
+                                            <!-- Imagen actual (usamos un ID para poder manipularla con JS) -->
+                                            <img id="profileImage" th:src="${usuario.fotoPerfil}"
+                                                 alt="Foto de perfil"
+                                                 class="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-80 transition">
+                                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                                <label class="cursor-pointer bg-black bg-opacity-50 text-white p-3 rounded-full">
+                                                    <i class="fas fa-camera"></i>
+                                                    <input id="fileInput" type="file" name="file" class="hidden" accept="image/*">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const fileInput = document.getElementById('fileInput');
+                                            const profileImage = document.getElementById('profileImage');
+                                            const originalSrc = profileImage.src; // Guardamos la URL original
+
+                                            fileInput.addEventListener('change', function(e) {
+                                                const file = e.target.files[0];
+
+                                                if (file) {
+                                                    // Verificar si es una imagen válida
+                                                    if (!file.type.match('image.*')) {
+                                                        alert('Por favor, selecciona un archivo de imagen válido.');
+                                                        return;
+                                                    }
+
+                                                    const reader = new FileReader();
+
+                                                    reader.onload = function(event) {
+                                                        // Mostrar la nueva imagen temporalmente
+                                                        profileImage.src = event.target.result;
+                                                    };
+
+                                                    reader.onerror = function() {
+                                                        console.error('Error al leer la imagen');
+                                                        // Mantener la imagen original si hay error
+                                                        profileImage.src = originalSrc;
+                                                    };
+
+                                                    reader.readAsDataURL(file);
+                                                } else {
+                                                    // Si se cancela la selección, mantener la imagen original
+                                                    profileImage.src = originalSrc;
+                                                }
+                                            });
+
+                                            // También puedes hacer que el botón "Cambiar foto" active el file input
+                                            document.querySelector('button').addEventListener('click', function() {
+                                                fileInput.click();
+                                            });
+                                        });
+                                    </script>
+
+                                    <!-- Campos del formulario -->
+                                    <div class="w-full md:w-2/3 space-y-6">
+                                        <!-- Información personal -->
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+                                                <i class="fas fa-user-circle mr-2 text-blue-500"></i> Información
+                                                Personal
+                                            </h3>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label for="firstName"
+                                                           class="block text-sm font-medium text-gray-700">Nombre</label>
+                                                    <input type="text" id="firstName" th:field="*{nombre}"
+                                                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                </div>
+                                                <div>
+                                                    <label for="lastName"
+                                                           class="block text-sm font-medium text-gray-700">Apellido</label>
+                                                    <input type="text" id="lastName" th:field="*{apellido}"
+                                                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                </div>
+                                                <div class="col-span-1 md:col-span-2">
+                                                    <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                                                    <input type="email"
+                                                           id="email"
+                                                           th:field="*{correo}"
+                                                           readonly
+                                                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-gray-50">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cambio de contraseña -->
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+                                                <i class="fas fa-lock mr-2 text-blue-500"></i> Cambiar Contraseña
+                                            </h3>
+                                            <div class="space-y-4">
+                                                <div>
+                                                    <label for="currentPassword" class="block text-sm font-medium text-gray-700">Contraseña actual</label>
+                                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                                        <input type="password" id="currentPassword"
+                                                               class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10">
+                                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                                            <i class="far fa-eye text-gray-400 hover:text-gray-500"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label for="newPassword" class="block text-sm font-medium text-gray-700">Nueva contraseña</label>
+                                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                                        <input type="password" id="newPassword"
+                                                               class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10">
+                                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                                            <i class="far fa-eye text-gray-400 hover:text-gray-500"></i>
+                                                        </button>
+                                                    </div>
+                                                    <p class="mt-1 text-xs text-gray-500">Mínimo 8 caracteres, con mayúscula, número y símbolo</p>
+                                                </div>
+                                                <div>
+                                                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
+                                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                                        <input type="password" id="confirmPassword"
+                                                               class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10">
+                                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                                            <i class="far fa-eye text-gray-400 hover:text-gray-500"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Pie de página con acciones -->
+                                <div class="bg-gray-50 border-t p-0 border-gray-200 m-0 sm:mt-6 px-6 py-4">
+                                    <div class="flex gap-5 sm:justify-between">
+                                        <button type="button"
+                                                onclick="window.history.back();"
+                                                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                            Cancelar
+                                        </button>
+                                        <div class="space-x-3">
+                                            <button type="submit"
+                                                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                                                Guardar cambios
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const input1 = document.getElementById('input1');
+                    const input2 = document.getElementById('input2');
+                    const form = document.querySelector('form');
+
+                    // Crear elemento de mensaje con clases Tailwind
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'validation-message text-sm mt-1 h-5';
+                    input2.parentNode.appendChild(messageElement);
+
+                    function validateInputs() {
+                        const value1 = input1.value.trim();
+                        const value2 = input2.value.trim();
+
+                        // Resetear estilos
+                        input2.classList.remove(
+                            'border-green-500', 'focus:ring-green-500',
+                            'border-red-500', 'focus:ring-red-500'
+                        );
+
+                        if (value1 === '' || value2 === '') {
+                            messageElement.textContent = '';
+                            input2.classList.add('border-gray-300', 'focus:ring-blue-500');
+                            return false;
+                        }
+
+                        if (value1 === value2) {
+                            input2.classList.add('border-green-500', 'focus:ring-green-500');
+                            messageElement.innerHTML = '<span class="text-green-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Las entradas coinciden</span>';
+                            return true;
+                        } else {
+                            input2.classList.add('border-red-500', 'focus:ring-red-500');
+                            messageElement.innerHTML = '<span class="text-red-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>Las entradas no coinciden</span>';
+                            return false;
+                        }
+                    }
+
+                    // Event listeners
+                    [input1, input2].forEach(input => {
+                        input.addEventListener('input', validateInputs);
+                        input.addEventListener('blur', validateInputs);
+                    });
+
+                    // Validación de formulario
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            if (!validateInputs()) {
+                                e.preventDefault();
+                                input2.focus();
+                                // Agregar shake animation para énfasis
+                                input2.classList.add('animate-shake');
+                                setTimeout(() => input2.classList.remove('animate-shake'), 500);
+                            }
+                        });
+                    }
+                });
+            </script>
+            <script th:src="@{/js/main.js}"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const toggleButtons = document.querySelectorAll('.password-toggle');
+
+                    toggleButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const input = this.parentElement.querySelector('input');
+                            const eyeOpen = this.querySelector('.eye-open');
+                            const eyeClosed = this.querySelector('.eye-closed');
+
+                            if (input.type === 'password') {
+                                input.type = 'text';
+                                eyeOpen.classList.add('hidden');
+                                eyeClosed.classList.remove('hidden');
+                                this.setAttribute('aria-label', 'Ocultar contraseña');
+                            } else {
+                                input.type = 'password';
+                                eyeOpen.classList.remove('hidden');
+                                eyeClosed.classList.add('hidden');
+                                this.setAttribute('aria-label', 'Mostrar contraseña');
+                            }
+                        });
+                    });
+                });
+            </script>
             </div>
-
-            <!-- Formulario de edición -->
-            <form class="p-6">
-                <div class="flex flex-col md:flex-row gap-8">
-                    <!-- Sección de foto -->
-                    <div class="w-full md:w-1/3 flex flex-col items-center">
-                        <div class="relative mb-4 group">
-                            <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-                                 alt="Foto de perfil"
-                                 class="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-80 transition">
-                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                <label class="cursor-pointer bg-black bg-opacity-50 text-white p-3 rounded-full">
-                                    <i class="fas fa-camera"></i>
-                                    <input type="file" class="hidden" accept="image/*">
-                                </label>
-                            </div>
-                        </div>
-                        <button type="button" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                            Cambiar foto
-                        </button>
-                    </div>
-
-                    <!-- Campos del formulario -->
-                    <div class="w-full md:w-2/3 space-y-6">
-                        <!-- Información personal -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
-                                <i class="fas fa-user-circle mr-2 text-blue-500"></i> Información Personal
-                            </h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="firstName" class="block text-sm font-medium text-gray-700">Nombre</label>
-                                    <input type="text" id="firstName" value="Juan"
-                                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label for="lastName" class="block text-sm font-medium text-gray-700">Apellido</label>
-                                    <input type="text" id="lastName" value="Pérez"
-                                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
-                                    <input type="email" id="email" value="juan.perez@example.com"
-                                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label for="phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                                    <input type="tel" id="phone" value="+1 (555) 123-4567"
-                                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cambio de contraseña -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
-                                <i class="fas fa-lock mr-2 text-blue-500"></i> Cambiar Contraseña
-                            </h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="currentPassword" class="block text-sm font-medium text-gray-700">Contraseña actual</label>
-                                    <div class="mt-1 relative rounded-md shadow-sm">
-                                        <input type="password" id="currentPassword"
-                                               class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10">
-                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                            <i class="far fa-eye text-gray-400 hover:text-gray-500"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="newPassword" class="block text-sm font-medium text-gray-700">Nueva contraseña</label>
-                                    <div class="mt-1 relative rounded-md shadow-sm">
-                                        <input type="password" id="newPassword"
-                                               class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10">
-                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                            <i class="far fa-eye text-gray-400 hover:text-gray-500"></i>
-                                        </button>
-                                    </div>
-                                    <p class="mt-1 text-xs text-gray-500">Mínimo 8 caracteres, con mayúscula, número y símbolo</p>
-                                </div>
-                                <div>
-                                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
-                                    <div class="mt-1 relative rounded-md shadow-sm">
-                                        <input type="password" id="confirmPassword"
-                                               class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10">
-                                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                            <i class="far fa-eye text-gray-400 hover:text-gray-500"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Configuraciones adicionales -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
-                                <i class="fas fa-cog mr-2 text-blue-500"></i> Preferencias
-                            </h3>
-                            <div class="space-y-3">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="twoFactor" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label for="twoFactor" class="ml-2 block text-sm text-gray-700">Autenticación de dos factores</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="notifications" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label for="notifications" class="ml-2 block text-sm text-gray-700">Recibir notificaciones por correo</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="darkMode" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label for="darkMode" class="ml-2 block text-sm text-gray-700">Modo oscuro</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pie de página con acciones -->
-                <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 mt-6">
-                    <div class="flex justify-between">
-                        <button @click="editMode = false" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                            Cancelar
-                        </button>
-                        <div class="space-x-3">
-                            <button type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                Descartar cambios
-                            </button>
-                            <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
-                                Guardar cambios
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
     </div>
-
-</div>
-                <script th:src="@{/js/main.js}"></script>
+</main>
 </body>
 </html>
