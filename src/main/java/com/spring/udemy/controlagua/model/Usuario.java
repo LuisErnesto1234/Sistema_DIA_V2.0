@@ -1,9 +1,7 @@
 package com.spring.udemy.controlagua.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -23,15 +21,14 @@ public class Usuario {
     @EqualsAndHashCode.Include
     private Long id;
     @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 3, message = "El nombre debe tener al menos 3 caracteres.")
     private String nombre;
     @NotBlank(message = "El apellido es obligatorio")
+    @Size(min = 4, message = "El nombre debe tener al menos 4 caracteres.")
     private String apellido;
     @NotNull(message = "Los minutos acumulados son obligatorios")
-    @Min(value = 0, message = "Los minutos acumulados deben ser mayores a 0!!")
     @Column(name = "minutos_acumulados")
     private Integer minutosAcumulados;
-    @NotNull(message = "Los minutos de la semana son obligatorios")
-    @Min(value = 0, message = "Los minutos de semana deben ser mayores a 0!!")
     @Column(name = "minutos_semana")
     private Integer minutosSemana;
     private String estado;

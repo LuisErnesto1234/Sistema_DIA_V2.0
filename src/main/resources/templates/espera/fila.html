@@ -8,6 +8,7 @@
 <div th:replace="recursos/aside"></div>
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-200 min-h-screen transition-all main">
     <div th:replace="recursos/navbar"></div>
+    <div th:if="${success}" id="notif-message" th:data-message="${success}" style="display: none;"></div>
     <div class="min-h-screen bg-gray-50 p-2 sm:p-6">
         <div class="max-w-7xl mx-auto">
             <!-- Contenedor principal -->
@@ -207,6 +208,33 @@
     </div>
 </main>
 <script th:src="@{/js/main.js}"></script>
+<audio id="notif-sound" th:src="@{/sounds/notification.mp3}" preload="auto"></audio>
+
+<script>
+    function playSound() {
+        const audio = document.getElementById("notif-sound");
+        if (audio) {
+            audio.play();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        if ("Notification" in window && Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        const notifEl = document.getElementById("notif-message");
+        if (notifEl && Notification.permission === "granted") {
+            const message = notifEl.dataset.message;
+            new Notification("Nueva acción en la fila de espera", {
+                body: message,
+                icon: "/static/icons/logoFinal.png"
+            });
+            playSound();
+        }
+    });
+</script>
+
 
 </body>
 </html>

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -39,4 +40,9 @@ public class ControlAgua {
     private LocalTime horaFin;
 
     private Integer minutosUtilizados;
+
+    @Enumerated(EnumType.STRING)
+    private TipoRegistro tipoRegistro; //USO o RECARGA
+
+    private Double precio; //Solo para recargas
 }

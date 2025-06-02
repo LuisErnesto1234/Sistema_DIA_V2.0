@@ -108,6 +108,8 @@
                         <th class="px-4 py-2 text-left font-semibold">Hora Inicio</th>
                         <th class="px-4 py-2 text-left font-semibold">Hora Fin</th>
                         <th class="px-4 py-2 text-left font-semibold">Minutos</th>
+                        <th class="px-4 py-2 text-left font-semibold">Tipo Registro</th>
+                        <th class="px-4 py-2 text-left font-semibold">Precio</th>
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -117,6 +119,8 @@
                         <td class="px-4 py-2" th:text="${#temporals.format(control.horaInicio, 'HH:mm')}"></td>
                         <td class="px-4 py-2" th:text="${#temporals.format(control.horaFin, 'HH:mm')}"></td>
                         <td class="px-4 py-2" th:text="${control.minutosUtilizados}"></td>
+                        <td class="px-2 py-2" th:text="${control.tipoRegistro}"></td>
+                        <td class="px-2 py-2" th:text="${control.precio}"></td>
                     </tr>
                     <tr th:if="${controles.totalElements == 0 && selectedYear != null && selectedMonth != null && selectedDay != null}">
                         <td colspan="5" class="px-4 py-3 text-center text-red-600">No se encontraron registros con los filtros seleccionados</td>

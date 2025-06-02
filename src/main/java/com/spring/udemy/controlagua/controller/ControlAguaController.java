@@ -1,6 +1,7 @@
 package com.spring.udemy.controlagua.controller;
 
 import com.spring.udemy.controlagua.model.ControlAgua;
+import com.spring.udemy.controlagua.model.TipoRegistro;
 import com.spring.udemy.controlagua.model.Usuario;
 import com.spring.udemy.controlagua.service.ControlAguaService;
 import com.spring.udemy.controlagua.service.UsuarioService;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Controller
@@ -38,13 +40,23 @@ public class ControlAguaController {
     @GetMapping
     public String listarControles(Model model, @RequestParam(defaultValue = "0") int page,
                                   @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaRegistro").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         Page<ControlAgua> controlesPage = controlAguaService.listarControles(pageable);
 
         model.addAttribute("controlesPage", controlesPage);
         model.addAttribute("paginaActual", page);
 
         return "control/listar";
+    }
+
+    @GetMapping("/recarga/editar/{id}")
+    public String editarControlAguaRecarga(Model model, @PathVariable Long id){
+        ControlAgua control = controlAguaService.buscarControlAguaPorId(id);
+        Usuario usuario = usuarioService.buscarUsuarioPorId(control.getUsuario().getId()).orElseThrow(() ->
+                new RuntimeException("No existe el usuario"));
+        model.addAttribute("control", control);
+        model.addAttribute("usuario", usuario);
+        return "control/formulario-recarga";
     }
 
     @GetMapping("/eliminar/{id}")
@@ -70,12 +82,92 @@ public class ControlAguaController {
         return "control/formulario";
     }
 
-    @PostMapping("/guardar")
-    public String guardarControlAgua(@ModelAttribute("control") @Valid ControlAgua controlAgua,
-                                     BindingResult bindingResult,
-                                     Model model, RedirectAttributes attr) {
+    @GetMapping("/recarga")
+        public String controlRecarga(@RequestParam(name = "minutos", required = false) int minutos,
+        @RequestParam(name = "usuarioId", required = false) Long usuarioId,
+        @RequestParam(name = "fecha", required = false) LocalDate fecha,
+        @RequestParam(name = "horaInicio", required = false) LocalTime horaInicio,
+        @RequestParam(name = "horaFin", required = false) LocalTime horaFin,
+        Model model){
+            ControlAgua recarga = new ControlAgua();
 
-        // Validar horas manualmente ANTES de verificar hasErrors()
+            recarga.setFechaRegistro(fecha);
+            recarga.setHoraInicio(horaInicio);
+            recarga.setHoraFin(horaFin);
+            recarga.setMinutosUtilizados(minutos);
+            recarga.setPrecio(minutos * 0.5);
+            recarga.setTipoRegistro(TipoRegistro.RECARGA);
+
+            Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId).orElseThrow(() -> new RuntimeException("Usuario no encontrado!"));
+            recarga.setUsuario(usuario);
+
+            model.addAttribute("control", recarga);
+            model.addAttribute("usuario", usuario);
+            return "control/formulario-recarga";
+        }
+
+        @PostMapping("/recarga/guardar")
+        public String guardarControlAguaRecarga(@ModelAttribute("control") @Valid ControlAgua controlAgua,
+                BindingResult bindingResult,
+                Model model,
+                RedirectAttributes attr){
+
+            validarHoras(controlAgua, bindingResult);
+            if (bindingResult.hasErrors()){
+                prepararFormulario(model, controlAgua);
+                return "control/formulario-recarga";
+            }
+
+            TipoRegistro tipoRegistro = controlAguaService.procesarControl(controlAgua);
+
+        if (tipoRegistro == TipoRegistro.RECARGA){
+            controlAguaService.guardarControlAgua(controlAgua);
+        }
+
+        attr.addFlashAttribute("success", "Control por recarga, guardado correctamente!");
+        return "redirect:/control";
+    }
+
+    @PostMapping("/guardar")
+    public String guardarControlAguaUso(@ModelAttribute("control") @Valid ControlAgua controlAgua,
+                                        BindingResult bindingResult,
+                                        Model model, RedirectAttributes attr) {
+
+        validarHoras(controlAgua, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            prepararFormulario(model, controlAgua);
+            return "control/formulario";
+        }
+
+        TipoRegistro tipoRegistro;
+
+        if (controlAgua.getId() != null) {
+            // Es una edición
+            tipoRegistro = controlAguaService.editarControlAgua(controlAgua.getId(), controlAgua);
+            attr.addFlashAttribute("success", "Control editado correctamente.");
+        } else {
+            // Es un registro nuevo
+            tipoRegistro = controlAguaService.procesarControl(controlAgua);
+            attr.addFlashAttribute("success", "Control guardado correctamente.");
+        }
+
+        if (tipoRegistro == TipoRegistro.RECARGA) {
+            return "redirect:/control/recarga?minutos=" + controlAgua.getMinutosUtilizados()
+                    + "&usuarioId=" + controlAgua.getUsuario().getId() + "&fecha=" + controlAgua.getFechaRegistro()
+                    + "&horaInicio=" + controlAgua.getHoraInicio() + "&horaFin=" + controlAgua.getHoraFin();
+        }
+
+        return "redirect:/control";
+    }
+
+    private void prepararFormulario(Model model, ControlAgua controlAgua) {
+        model.addAttribute("control", controlAgua);
+        model.addAttribute("controles", controlAguaService.controlAguaList());
+        model.addAttribute("usuarios", usuarioService.listaUsuario());
+    }
+
+    private void validarHoras(ControlAgua controlAgua, BindingResult bindingResult){
         if (controlAgua.getHoraInicio() == null) {
             bindingResult.rejectValue("horaInicio", "field.required", "La hora de inicio es obligatoria.");
         }
@@ -86,31 +178,6 @@ public class ControlAguaController {
         if (controlAgua.getHoraInicio() != null && controlAgua.getHoraFin() != null && controlAgua.getHoraFin().isBefore(controlAgua.getHoraInicio())) {
             bindingResult.rejectValue("horaFin", "field.invalid", "La hora de fin debe ser después de la hora de inicio.");
         }
-
-        // Verificar si hubo errores (ya sean por anotaciones @NotNull o rejectValue manual)
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("control", controlAgua);
-            model.addAttribute("controles", controlAguaService.controlAguaList());
-            model.addAttribute("usuarios", usuarioService.listaUsuario());
-            return "control/formulario";
-        }
-
-        //TODO Cálculo de minutos si tod es válido
-
-        Usuario usuario = usuarioService.buscarUsuarioPorId(controlAgua.getUsuario().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Integer minutosUtilizados = controlAguaService.cantidadMinutosAcumulados(controlAgua.getHoraInicio(), controlAgua.getHoraFin());
-        System.out.println("Minutos utilizados" + minutosUtilizados);
-        usuarioService.MinutosUtilizadosOperacion(minutosUtilizados, usuario);
-        //TODO Test
-
-        //TODO Actualizar datos en el control
-        controlAgua.setUsuario(usuario);
-        controlAgua.setMinutosUtilizados(minutosUtilizados);
-
-        //TODO Guardar el Control
-        attr.addFlashAttribute("success", "Control guardado correctamente.");
-        controlAguaService.guardarControlAgua(controlAgua);
-        return "redirect:/control";
     }
 
     @GetMapping("/export/excel")

@@ -1,6 +1,8 @@
 package com.spring.udemy.controlagua.service;
 
+import com.spring.udemy.controlagua.model.ControlAgua;
 import com.spring.udemy.controlagua.model.Rol;
+import com.spring.udemy.controlagua.model.TipoRegistro;
 import com.spring.udemy.controlagua.model.Usuario;
 import com.spring.udemy.controlagua.repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
@@ -9,10 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -89,21 +88,38 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public void MinutosUtilizadosOperacion(Integer minutosUtilizados, Usuario usuario){
-        if (usuario != null && minutosUtilizados != null){
-            if (minutosUtilizados <= usuario.getMinutosSemana()){
-                usuario.setMinutosSemana(usuario.getMinutosSemana() - minutosUtilizados);
-            }else {
-                if (usuario.getMinutosSemana() > 0){
-                    Integer minutosRestantes = minutosUtilizados - usuario.getMinutosSemana();
-                    usuario.setMinutosSemana(0);
-                    usuario.setMinutosAcumulados(usuario.getMinutosAcumulados() - minutosRestantes);
-                }else {
-                    Integer minutosRestantes = usuario.getMinutosAcumulados() - minutosUtilizados;
-                    usuario.setMinutosAcumulados(minutosRestantes);
-                }
+    public void MinutosUtilizadosOperacion(Integer minutosUtilizados, Usuario usuario, ControlAgua controlAgua) {
+        if (usuario != null && minutosUtilizados != null) {
+
+            int minutosSemana = usuario.getMinutosSemana() != null ? usuario.getMinutosSemana() : 0;
+            int minutosAcumulados = usuario.getMinutosAcumulados() != null ? usuario.getMinutosAcumulados() : 0;
+
+            if (minutosUtilizados <= minutosSemana) {
+                usarMinutosDeSemana(usuario, minutosUtilizados);
+                controlAgua.setTipoRegistro(TipoRegistro.USO);
+            }
+            else if (minutosUtilizados <= minutosSemana + minutosAcumulados) {
+                int restantes = minutosUtilizados - minutosSemana;
+                usarMinutosDeSemana(usuario, minutosSemana);
+                usarMinutosAcumulados(usuario, restantes);
+                controlAgua.setTipoRegistro(TipoRegistro.USO);
+            }
+            else {
+                // No tiene suficientes minutos → RECARGA
+                controlAgua.setTipoRegistro(TipoRegistro.RECARGA);
+                controlAgua.setPrecio(minutosUtilizados * 0.5);
             }
         }
+    }
+
+    public void usarMinutosDeSemana(Usuario usuario, int minutos) {
+        usuario.setMinutosSemana(usuario.getMinutosSemana() - minutos);
+    }
+
+    public void usarMinutosAcumulados(Usuario usuario, int minutosUtilizados) {
+        Integer minutosRestantes = minutosUtilizados - usuario.getMinutosSemana();
+        usuario.setMinutosSemana(0);
+        usuario.setMinutosAcumulados(usuario.getMinutosAcumulados() - minutosRestantes);
     }
 
     public Page<Usuario> listarUsuarios(Pageable pageable) {

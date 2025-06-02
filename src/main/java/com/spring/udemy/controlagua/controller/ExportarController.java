@@ -1,24 +1,15 @@
 package com.spring.udemy.controlagua.controller;
 
-import com.spring.udemy.controlagua.model.Usuario;
 import com.spring.udemy.controlagua.service.ControlAguaService;
 import com.spring.udemy.controlagua.service.UsuarioService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/exportar")
@@ -109,7 +100,7 @@ public class ExportarController {
 //    }
 
     private String getLogoAsBase64() throws IOException {
-        ClassPathResource imgFile = new ClassPathResource("static/images/logofinal.png");
+        ClassPathResource imgFile = new ClassPathResource("static/images/logoFinal.png");
         byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
         return Base64.getEncoder().encodeToString(bytes);
     }
