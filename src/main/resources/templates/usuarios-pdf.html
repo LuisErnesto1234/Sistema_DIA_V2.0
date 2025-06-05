@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Reporte Control Agua</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h3 { color: #333; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .footer { margin-top: 30px; text-align: right; font-size: 0.8em; color: #666; }
+    </style>
+</head>
+<body>
+<h3>Usuarios registrados en el sistema</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Correo</th>
+        <th>Minutos Acumulados</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${usuarios}">
+        <td th:text="${u.nombre}"></td>
+        <td th:text="${u.apellido}"></td>
+        <td th:text="${u.correo}"></td>
+        <td th:text="${u.minutosAcumulados}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="footer">
+    Generado el: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+</div>
+</body>
+</html>

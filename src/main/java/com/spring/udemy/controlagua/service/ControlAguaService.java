@@ -42,6 +42,8 @@ public class ControlAguaService {
         ControlAgua control = controlAguaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Control no encontrado"));
 
+        devolverMinutosEliminar(control);
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String correo = auth.getName();
         Usuario usuarioSesion = usuarioService.buscarUsuarioPorCorreo(correo).orElseThrow();
@@ -51,12 +53,37 @@ public class ControlAguaService {
         historial.setAccion(TipoAccion.ELIMINACION);
         historial.setMinutosAntes(control.getMinutosUtilizados());
         historial.setMinutosDespues(0);
-        historial.setObservacion("Control eliminado.");
+        historial.setObservacion("Control eliminado del usuario: " + control.getUsuario().getNombre() +
+                " " + control.getUsuario().getApellido());
         historial.setIdControlModificado(control.getId());
         historial.setUsuarioQueModifico(usuarioSesion);
 
         historialRepository.save(historial);
         controlAguaRepository.deleteById(id);
+    }
+
+    public void devolverMinutosEliminar(ControlAgua controlAguaActualizado){
+        if (controlAguaActualizado.getTipoRegistro() == TipoRegistro.USO){
+            Usuario usuario = controlAguaActualizado.getUsuario();
+            int minutosUsados = controlAguaActualizado.getMinutosUtilizados();
+
+            int minutosSemana = usuario.getMinutosSemana() != null ? usuario.getMinutosSemana() : 0;
+            int minutosAcumulados = usuario.getMinutosAcumulados() != null ? usuario.getMinutosAcumulados() : 0;
+
+
+            if (minutosSemana < 60){
+                //TODO: Devolver al usuario minutos usados en minutos de semana
+                int espacioDisponible = 60 - minutosSemana;
+                int aSumarSemana = Math.min(minutosUsados, espacioDisponible);
+                int aSumarAcumulados = minutosUsados - aSumarSemana;
+
+                usuario.setMinutosSemana(minutosSemana + aSumarSemana);
+                usuario.setMinutosAcumulados(minutosAcumulados + aSumarAcumulados);
+            }else {
+                usuario.setMinutosAcumulados(minutosAcumulados + minutosUsados);
+            }
+            usuarioRepository.save(usuario);
+        }
     }
 
     public void guardarControlAgua(ControlAgua controlAgua){
@@ -100,9 +127,11 @@ public class ControlAguaService {
         historial.setMinutosAntes(0); // Como es nuevo, antes era 0
         historial.setMinutosDespues(minutos);
         if(controlAgua.getTipoRegistro() == TipoRegistro.RECARGA){
-            historial.setObservacion("Nuevo control creado por recarga.");
+            historial.setObservacion("Nuevo control creado por recarga, al usuario: " +
+                    controlAgua.getUsuario().getNombre() + " " + controlAgua.getUsuario().getApellido());
         }else {
-            historial.setObservacion("Nuevo control creado por consumo.");
+            historial.setObservacion("Nuevo control creado por consumo, al usuario: " +
+                            controlAgua.getUsuario().getNombre() + " " + controlAgua.getUsuario().getApellido());
         }
         historial.setIdControlModificado(controlAgua.getId()); // Ya persistido
         historial.setUsuarioQueModifico(usuarioSesion);
@@ -154,8 +183,8 @@ public class ControlAguaService {
         historial.setUsuarioQueModifico(usuarioQueModifico);
         historial.setIdControlModificado(original.getId());
         historial.setAccion(TipoAccion.EDICION);
-        historial.setObservacion("Edición de control por diferencia de " + diferencia + " minutos.");
-
+        historial.setObservacion("Edición de control por diferencia de " + diferencia + " minutos." +
+                "Realizado para el usuario: " + original.getUsuario().getNombre() + " " + original.getUsuario().getApellido());
         historialRepository.save(historial);
         usuarioRepository.save(usuario);
 

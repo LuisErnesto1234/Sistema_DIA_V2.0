@@ -24,9 +24,10 @@ public class SeguridadConfig {
         return http.
                 authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/control/**").hasRole("ADMIN")
+                        .requestMatchers("/control/nuevo").hasRole("ADMIN")
                         .requestMatchers("/usuario/nuevo").hasRole("ADMIN")
                         .requestMatchers("/usuario").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/control").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/login","/css/**","/", "/js/**", "/icons/**", "/images/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(login -> login

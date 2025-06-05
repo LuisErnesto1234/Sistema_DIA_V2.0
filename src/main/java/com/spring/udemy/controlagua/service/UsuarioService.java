@@ -130,6 +130,9 @@ public class UsuarioService {
         return usuarioRepository.findByCorreo(correo);
     }
 
+    public Page<Usuario> buscarPorNombreOApellido(String texto, Pageable pageable){
+        return usuarioRepository.findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(texto, texto, pageable);
+    }
 //    public void agregarRolAdmin(Long usuarioId) {
 //        Usuario usuario = usuarioRepository.findById(usuarioId)
 //                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

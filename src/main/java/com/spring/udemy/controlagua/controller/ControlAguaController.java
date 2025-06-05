@@ -83,48 +83,41 @@ public class ControlAguaController {
     }
 
     @GetMapping("/recarga")
-        public String controlRecarga(@RequestParam(name = "minutos", required = false) int minutos,
-        @RequestParam(name = "usuarioId", required = false) Long usuarioId,
-        @RequestParam(name = "fecha", required = false) LocalDate fecha,
-        @RequestParam(name = "horaInicio", required = false) LocalTime horaInicio,
-        @RequestParam(name = "horaFin", required = false) LocalTime horaFin,
-        Model model){
-            ControlAgua recarga = new ControlAgua();
+    public String controlRecarga(@ModelAttribute("control") ControlAgua recarga, Model model) {
+        if (recarga == null || recarga.getUsuario() == null) {
+            return "redirect:/control"; // Si alguien entra directo sin pasar por el flujo correcto
+        }
 
-            recarga.setFechaRegistro(fecha);
-            recarga.setHoraInicio(horaInicio);
-            recarga.setHoraFin(horaFin);
-            recarga.setMinutosUtilizados(minutos);
-            recarga.setPrecio(minutos * 0.5);
-            recarga.setTipoRegistro(TipoRegistro.RECARGA);
+        Usuario usuario = usuarioService.buscarUsuarioPorId(recarga.getUsuario().getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado!"));
 
-            Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId).orElseThrow(() -> new RuntimeException("Usuario no encontrado!"));
-            recarga.setUsuario(usuario);
+        recarga.setUsuario(usuario);
 
-            model.addAttribute("control", recarga);
-            model.addAttribute("usuario", usuario);
+        model.addAttribute("control", recarga);
+        model.addAttribute("usuario", usuario);
+
+        return "control/formulario-recarga";
+    }
+
+    @PostMapping("/recarga/guardar")
+    public String guardarControlAguaRecarga(@ModelAttribute("control") @Valid ControlAgua controlAgua,
+                                            BindingResult bindingResult,
+                                            Model model,
+                                            RedirectAttributes attr) {
+
+        validarHoras(controlAgua, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            prepararFormulario(model, controlAgua);
             return "control/formulario-recarga";
         }
 
-        @PostMapping("/recarga/guardar")
-        public String guardarControlAguaRecarga(@ModelAttribute("control") @Valid ControlAgua controlAgua,
-                BindingResult bindingResult,
-                Model model,
-                RedirectAttributes attr){
+        // Ya guarda y devuelve el tipo dentro de este método
+        TipoRegistro tipoRegistro = controlAguaService.procesarControl(controlAgua);
 
-            validarHoras(controlAgua, bindingResult);
-            if (bindingResult.hasErrors()){
-                prepararFormulario(model, controlAgua);
-                return "control/formulario-recarga";
-            }
+        // ¡Ya no volvemos a guardar el control! porque ya lo hizo `procesarControl()`
 
-            TipoRegistro tipoRegistro = controlAguaService.procesarControl(controlAgua);
-
-        if (tipoRegistro == TipoRegistro.RECARGA){
-            controlAguaService.guardarControlAgua(controlAgua);
-        }
-
-        attr.addFlashAttribute("success", "Control por recarga, guardado correctamente!");
+        attr.addFlashAttribute("success", "Control por recarga guardado correctamente!");
         return "redirect:/control";
     }
 
@@ -153,10 +146,10 @@ public class ControlAguaController {
         }
 
         if (tipoRegistro == TipoRegistro.RECARGA) {
-            return "redirect:/control/recarga?minutos=" + controlAgua.getMinutosUtilizados()
-                    + "&usuarioId=" + controlAgua.getUsuario().getId() + "&fecha=" + controlAgua.getFechaRegistro()
-                    + "&horaInicio=" + controlAgua.getHoraInicio() + "&horaFin=" + controlAgua.getHoraFin();
+            attr.addFlashAttribute("control", controlAgua);  // Pasa el objeto completo
+            return "redirect:/control/recarga";
         }
+
 
         return "redirect:/control";
     }

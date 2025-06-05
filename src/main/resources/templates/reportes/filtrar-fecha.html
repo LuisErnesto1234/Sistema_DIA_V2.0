@@ -172,6 +172,13 @@
             this.form.submit();
         }
     });
+
+    document.getElementById('day').addEventListener('change', function() {
+        if (this.value) {
+            // Enviar el formulario cuando cambia el dia
+            this.form.submit();
+        }
+    });
 </script>
 <script th:src="@{/js/main.js}"></script>
 
