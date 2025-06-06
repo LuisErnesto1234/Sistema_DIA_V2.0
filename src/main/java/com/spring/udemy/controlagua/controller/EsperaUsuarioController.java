@@ -4,13 +4,11 @@ import com.spring.udemy.controlagua.model.EsperaUsuarioControl;
 import com.spring.udemy.controlagua.model.Usuario;
 import com.spring.udemy.controlagua.service.EsperaUsuarioService;
 import com.spring.udemy.controlagua.service.UsuarioService;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Controller
@@ -113,7 +112,7 @@ public class ControlAguaController {
         }
 
         // Ya guarda y devuelve el tipo dentro de este método
-        TipoRegistro tipoRegistro = controlAguaService.procesarControl(controlAgua);
+        controlAguaService.procesarControl(controlAgua);
 
         // ¡Ya no volvemos a guardar el control! porque ya lo hizo `procesarControl()`
 

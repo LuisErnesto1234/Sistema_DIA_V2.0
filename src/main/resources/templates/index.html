@@ -4,40 +4,31 @@
     <div th:replace="recursos/meta.html"></div>
     <title>Inicio | Sistema de control de agua</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .bg-gradient-option1 {
-                background-image: linear-gradient(to right bottom, #002093, #005ec7, #0092d9, #00c1d4, #4aedca);
-            }
-            .bg-gradient-option2 {
-                background-image: linear-gradient(to bottom right, #ff013d, #f80070, #d800a0, #9d31c9, #0051e1);
-            }
-        }
-    </style>
 </head>
-<body class="font-['Poppins'] bg-gray-100 p-0 m-0">
-<div class="w-full min-h-screen md:h-screen flex flex-col items-center justify-center p-4">
-    <div class="mb-8 text-center">
-        <h3 class="text-xl md:text-2xl font-medium text-gray-800">Sistema de control de agua - DIA</h3>
+<body class="bg-gray-100 font-['Poppins'] m-0 p-0">
+<div class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Título principal -->
+    <div class="mb-10 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Sistema de Control de Agua - DIA</h1>
+        <p class="text-gray-600 mt-2 text-sm md:text-base">Seleccione una opción para continuar</p>
     </div>
 
-    <div class="w-full flex flex-col md:flex-row h-auto md:h-screen">
-        <!-- Opción 1 - Gestión Usuarios -->
-        <div id="option1" class="flex-1 bg-gradient-option1 text-white shadow-md md:shadow-lg transition-all duration-300 flex flex-col items-center justify-center p-8 hover:shadow-xl hover:bg-gradient-option1-hover">
-            <h2 class="text-2xl md:text-3xl font-semibold mb-6 md:mb-8">Gestión Usuarios</h2>
-            <img th:src="@{/icons/gestion.svg}" alt="Icono de Gestión de usuarios"
-                 class="w-1/5 max-w-[150px] pb-5 md:pb-8">
-            <a class="btn bg-white text-gray-800 px-6 py-3 rounded-full font-bold no-underline transition-all duration-300 hover:bg-gray-800 hover:text-white hover:scale-105"
-               th:href="@{/usuario}">Ingresar</a>
+    <!-- Opciones de navegación -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl">
+
+        <!-- Gestión de Usuarios -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-lg p-8 flex flex-col items-center justify-between transition-transform hover:scale-105 text-white">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-center">Gestión de Usuarios</h2>
+            <img th:src="@{/icons/gestion.svg}" alt="Icono Gestión de usuarios" class="w-24 h-24 mb-6">
+            <a th:href="@{/usuario}" class="inline-block bg-white text-blue-700 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-blue-800 hover:text-white transition duration-300">Ingresar</a>
         </div>
 
-        <!-- Opción 2 - Control de Agua -->
-        <div id="option2" class="flex-1 bg-gradient-option2 text-white shadow-md md:shadow-lg transition-all duration-300 flex flex-col items-center justify-center p-8 hover:shadow-xl hover:bg-gradient-option2-hover">
-            <h2 class="text-2xl md:text-3xl font-semibold mb-6 md:mb-8">Control de Agua</h2>
-            <img th:src="@{/icons/control.svg}" alt="Icono de Control de agua"
-                 class="w-1/5 max-w-[150px] pb-5 md:pb-8">
-            <a class="btn bg-white text-gray-800 px-6 py-3 rounded-full font-bold no-underline transition-all duration-300 hover:bg-gray-800 hover:text-white hover:scale-105"
-               th:href="@{/control}">Ingresar</a>
+        <!-- Control de Agua -->
+        <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-2xl shadow-lg p-8 flex flex-col items-center justify-between transition-transform hover:scale-105 text-white">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-center">Control de Agua</h2>
+            <img th:src="@{/icons/control.svg}" alt="Icono Control de agua" class="w-24 h-24 mb-6">
+            <a th:href="@{/control}" class="inline-block bg-white text-green-700 font-semibold px-6 py-3 rounded-full shadow-md hover:bg-green-800 hover:text-white transition duration-300">Ingresar</a>
         </div>
     </div>
 </div>

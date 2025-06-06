@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <title>Error 405 - Método no permitido</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1>Error 405</h1>
+<p th:text="${error}"></p>
+<small th:text="${mensaje}"></small>
+<br>
+<button onclick="history.back()">Volver al atras.</button>
+</body>
+</html>

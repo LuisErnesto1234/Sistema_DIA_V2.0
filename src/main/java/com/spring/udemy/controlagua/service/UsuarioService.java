@@ -7,9 +7,13 @@ import com.spring.udemy.controlagua.model.Usuario;
 import com.spring.udemy.controlagua.repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,12 +24,14 @@ public class UsuarioService {
     private final RolService rolService;
     private final PasswordEncoder passwordEncoder;
     private final ImagenService imagenService;
+    private final UsuarioDetailsService usuarioDetailsService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RolService rolService, PasswordEncoder passwordEncoder, ImagenService imagenService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RolService rolService, PasswordEncoder passwordEncoder, ImagenService imagenService, UsuarioDetailsService usuarioDetailsService) {
         this.usuarioRepository = usuarioRepository;
         this.rolService = rolService;
         this.passwordEncoder = passwordEncoder;
         this.imagenService = imagenService;
+        this.usuarioDetailsService = usuarioDetailsService;
     }
 
     public void guardarUsuario(Usuario usuario, MultipartFile file) throws IOException {
@@ -133,36 +139,47 @@ public class UsuarioService {
     public Page<Usuario> buscarPorNombreOApellido(String texto, Pageable pageable){
         return usuarioRepository.findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(texto, texto, pageable);
     }
-//    public void agregarRolAdmin(Long usuarioId) {
-//        Usuario usuario = usuarioRepository.findById(usuarioId)
-//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-//
-//        Rol rolAdmin = rolService.getRolByNombre("ADMIN")
-//                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
-//
-//        usuario.getRoles().add(rolAdmin);
-//        usuarioRepository.save(usuario);
-//    }
 
-//    public void removerRolAdmin(Long usuarioId) {
-//        Usuario usuario = usuarioRepository.findById(usuarioId)
-//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-//
-//        Rol rolAdmin = rolService.getRolByNombre("ADMIN")
-//                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
-//
-//        usuario.getRoles().removeIf(r -> r.getNombre().equals("ADMIN"));
-//        usuarioRepository.save(usuario);
-//    }
+    public void agregarRolAdmin(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-//    public void registrarUsuario(Usuario usuario) {
-//        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
-//
-//        Rol rolUser = rolService.getRolByNombre("USER")
-//                .orElseThrow(() -> new RuntimeException("Rol USER no encontrado"));
-//
-//        usuario.setRoles(Set.of(rolUser));
-//        usuarioRepository.save(usuario);
-//    }
+        Rol rolAdmin = rolService.getRolByNombre("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
+
+        usuario.getRoles().add(rolAdmin);
+        usuarioRepository.save(usuario);
+
+        // Refrescar roles si es el mismo usuario autenticado
+        if (usuario.getCorreo().equals(getCorreoUsuarioAutenticado())) {
+            recargarRolesAutenticacion(usuario.getCorreo());
+        }
+    }
+
+    public String getCorreoUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName(); // asumiendo que el correo es el username
+    }
+
+    public void removerRolAdmin(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.getRoles().removeIf(r -> r.getNombre().equals("ADMIN"));
+        usuarioRepository.save(usuario);
+    }
+
+    public void recargarRolesAutenticacion(String correo) {
+        UserDetails userDetails = usuarioDetailsService.loadUserByUsername(correo);
+
+        UsernamePasswordAuthenticationToken nuevaAutenticacion =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        userDetails.getPassword(),
+                        userDetails.getAuthorities()
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(nuevaAutenticacion);
+    }
 
 }

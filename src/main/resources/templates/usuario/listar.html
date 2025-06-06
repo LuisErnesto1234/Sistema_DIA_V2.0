@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <div th:replace="recursos/meta"></div>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lista de Usuarios</title>
+    <title>Lista de Usuarios - DIA</title>
 </head>
 <body>
 <div th:replace="recursos/aside"></div>
@@ -19,7 +18,7 @@
                             <h3 class="text-2xl font-bold tracking-tight">Gestión de Usuarios</h3>
                             <p class="text-sm text-orange-100 opacity-90 mt-1">Administra todos los usuarios registrados en el sistema</p>
                         </div>
-                        <a href="/usuario/nuevo" class="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-rose-600 to-amber-500 p-0.5 font-medium text-white hover:shadow-lg transition-all duration-300">
+                        <a th:if="${usuarioLogeado.getNombreRolAmigable() == 'Administrador'}" href="/usuario/nuevo" class="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-rose-600 to-amber-500 p-0.5 font-medium text-white hover:shadow-lg transition-all duration-300">
                 <span class="relative rounded-md bg-rose-600 px-5 py-2.5 transition-all duration-300 group-hover:bg-opacity-0">
                     <span class="flex items-center">
                         <span class="mr-2">Agregar Usuario</span>
@@ -64,7 +63,7 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min. Semana</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Historial</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                <th scope="col" th:if="${usuarioLogeado.getNombreRolAmigable() == 'Administrador'}" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                             </thead>
                             <tbody id="tabla-original" class="bg-white divide-y divide-gray-200">
@@ -96,16 +95,40 @@
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a th:href="@{/usuario/editar/{id}(id=${usuario.id})}"
-                                       class="text-green-600 hover:text-green-900 mr-3">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a th:href="@{/usuario/eliminar/{id}(id=${usuario.id})}"
-                                       onclick="return confirm('¿Seguro que quieres eliminar este usuario?')"
-                                       class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
+                                <td th:if="${usuarioLogeado.getNombreRolAmigable() == 'Administrador'}" class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <!-- Botón Editar -->
+                                        <a th:href="@{/usuario/editar/{id}(id=${usuario.id})}"
+                                           class="inline-flex items-center justify-center p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-green-50 text-green-600 hover:text-green-700 transition-colors duration-200 ease-in-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                                           title="Editar usuario">
+                                            <i class="fas fa-edit text-lg"></i>
+                                        </a>
+
+                                        <!-- Botón Eliminar -->
+                                        <a th:href="@{/usuario/eliminar/{id}(id=${usuario.id})}"
+                                           onclick="return confirm('¿Seguro que quieres eliminar este usuario?')"
+                                           class="inline-flex items-center justify-center p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors duration-200 ease-in-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                           title="Eliminar usuario">
+                                            <i class="fas fa-trash-alt text-lg"></i>
+                                        </a>
+                                    </div>
+                                    <th:block th:with="esAdmin=${mapaEsAdmin[usuario.id]}">
+                                        <form th:if="${!esAdmin}" th:action="@{/usuario/agregar-admin}" method="post">
+                                            <input type="hidden" th:value="${usuario.id}" name="idUsuario">
+                                            <button type="submit"
+                                                    class="flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-md hover:from-green-600 hover:to-green-700 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                                                <i class="fas fa-user-shield mr-2"></i>
+                                            </button>
+                                        </form>
+
+                                        <form th:if="${esAdmin}" th:action="@{/usuario/quitar-admin}" method="post">
+                                            <input type="hidden" th:value="${usuario.id}" name="idUsuario">
+                                            <button type="submit"
+                                                    class="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg shadow-md hover:from-red-600 hover:to-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 ml-3">
+                                                <i class="fas fa-user-minus mr-2"></i>
+                                            </button>
+                                        </form>
+                                    </th:block>
                                 </td>
                             </tr>
                             </tbody>
@@ -155,6 +178,9 @@
 </main>
 <script th:src="@{/js/main.js}"></script>
 <script>
+    const rolUsuarioLogeado = "[[${usuarioLogeado.nombreRolAmigable}]]";
+</script>
+<script>
     const input = document.getElementById("busqueda");
     const tablaOriginal = document.getElementById("tabla-original");
     const tablaBusqueda = document.getElementById("tabla-busqueda");
@@ -202,42 +228,52 @@
                         clase = "bg-gray-100 text-gray-800";
                     }
                     return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${clase}">
-                            ${rol.nombre}
-                        </span>`;
+                ${rol.nombre}
+            </span>`;
                 }).join(" ");
 
+                // Generar HTML de acciones si es administrador
+                let accionesHTML = "";
+                if (rolUsuarioLogeado === "Administrador") {
+                    accionesHTML = `
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <a href="/usuario/editar/${usuario.id}" class="text-green-600 hover:text-green-900 mr-3">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="/usuario/eliminar/${usuario.id}" onclick="return confirm('¿Seguro que quieres eliminar este usuario?')" class="text-red-600 hover:text-red-900">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+
+        </td>`;
+                }
+
                 fila.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${usuario.id}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex-shrink-0 h-10 w-10">
-                        <img class="h-10 w-10 rounded-full" src="${usuario.fotoPerfil}" alt="Foto de ${usuario.nombre}">
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${usuario.nombre}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.apellido}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${usuario.minutosAcumulados}</span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${usuario.minutosSemana}</span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">${rolesHTML}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <a href="/reportes/usuario/${usuario.id}" class="text-blue-600 hover:text-blue-900">
-                        <i class="fas fa-eye"></i> Ver
-                    </a>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <a href="/usuario/editar/${usuario.id}" class="text-green-600 hover:text-green-900 mr-3">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="/usuario/eliminar/${usuario.id}" onclick="return confirm('¿Seguro que quieres eliminar este usuario?')" class="text-red-600 hover:text-red-900">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </td>
-            `;
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${usuario.id}</td>
+        <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex-shrink-0 h-10 w-10">
+                <img class="h-10 w-10 rounded-full" src="${usuario.fotoPerfil}" alt="Foto de ${usuario.nombre}">
+            </div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${usuario.nombre}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.apellido}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${usuario.minutosAcumulados}</span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${usuario.minutosSemana}</span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">${rolesHTML}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <a href="/reportes/usuario/${usuario.id}" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-eye"></i> Ver
+            </a>
+        </td>
+        ${accionesHTML}
+    `;
+
                 tablaBusqueda.appendChild(fila);
             });
+
 
         } catch (error) {
             console.error("Error al buscar usuarios:", error);

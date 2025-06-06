@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/usuario")
@@ -48,6 +50,14 @@ public class UsuarioController {
         Page<Usuario> usuariosPage = usuarioService.listarUsuarios(paginable);
         model.addAttribute("usuarios", usuariosPage);
         model.addAttribute("paginaActual", page);
+        Map<Long, Boolean> mapaEsAdmin = new HashMap<>();
+        for (Usuario usuario : usuariosPage.getContent()) {
+            boolean esAdmin = usuario.getRoles().stream()
+                    .anyMatch(r -> r.getNombre().equals("ADMIN"));
+            mapaEsAdmin.put(usuario.getId(), esAdmin);
+        }
+        model.addAttribute("mapaEsAdmin", mapaEsAdmin);
+
         return "usuario/listar";
     }
 
@@ -65,7 +75,6 @@ public class UsuarioController {
 
         return ResponseEntity.ok(usuariosDTO);
     }
-
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/editar/{id}")
@@ -144,5 +153,19 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(("Error al generar PDF: " + e.getMessage()).getBytes(StandardCharsets.UTF_8));
         }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/agregar-admin")
+    public String agregarAdminUsuario(@RequestParam Long idUsuario){
+        usuarioService.agregarRolAdmin(idUsuario);
+        return "redirect:/usuario";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/quitar-admin")
+    public String quitarAdminUsuario(@RequestParam Long idUsuario){
+        usuarioService.removerRolAdmin(idUsuario);
+        return "redirect:/usuario";
     }
 }

@@ -44,10 +44,4 @@ public class InicioController {
 
         return "inicio";
     }
-
-    @GetMapping("/prueba")
-    public String mostrarPrueba() {
-        return "prueba";
-    }
-
 }

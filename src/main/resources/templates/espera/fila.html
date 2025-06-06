@@ -128,7 +128,8 @@
                         </div>
 
                         <!-- Formulario para poner en espera -->
-                        <div th:if="${!usuarios.isEmpty()}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <diV th:if="${usuarioLogeado.getNombreRolAmigable() == 'Administrador'}">
+                        <div  th:if="${!usuarios.isEmpty()}" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             <div class="bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-3">
                                 <h3 class="text-lg font-semibold text-white text-center sm:text-start">Agregar a la espera</h3>
                             </div>
@@ -150,7 +151,8 @@
                                 </form>
                             </div>
                         </div>
-                    </div>
+                        </diV>
+                        </div>
 
                     <!-- Columna derecha -->
                     <div class="space-y-6">

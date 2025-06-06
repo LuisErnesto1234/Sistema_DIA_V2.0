@@ -228,6 +228,10 @@ public class ControlAguaService {
         return controlAguaRepository.findByUsuarioId(idUsuario, pageable);
     }
 
+    public List<ControlAgua> listarControlesPorUsuario(Long idUsuario){
+        return controlAguaRepository.findByUsuarioId(idUsuario);
+    }
+
     public Page<ControlAgua> buscarControlPorFecha(LocalDate fecha, Pageable pageable){
         return controlAguaRepository.findByFechaRegistro(fecha, pageable);
     }
@@ -262,6 +266,10 @@ public class ControlAguaService {
         } else {
             return controlAguaRepository.findAll(pageable);
         }
+    }
+
+    public void guardarTodos(List<ControlAgua> controles) {
+        controlAguaRepository.saveAll(controles);
     }
 
 }

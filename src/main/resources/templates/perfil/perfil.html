@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="recursos/meta"></div>
-    <title>Perfil - DIA</title>
+    <title th:text="${usuario.nombre + ' ' + usuario.apellido + ' - DIA'}"></title>
 </head>
 <body class="bg-gray-50">
 <div th:replace="recursos/aside"></div>

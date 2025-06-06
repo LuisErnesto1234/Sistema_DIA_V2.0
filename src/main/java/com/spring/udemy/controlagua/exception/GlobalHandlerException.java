@@ -5,6 +5,7 @@ import com.spring.udemy.controlagua.service.UsuarioService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,27 +24,37 @@ public class GlobalHandlerException {
     @ExceptionHandler(NoHandlerFoundException.class)
     public String handleNoHandlerFoundException(NoHandlerFoundException e, Model model){
         model.addAttribute("error", "Página no encontrada");
+        model.addAttribute("mensaje", e.getMessage());
         return "error/404";
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public String manejarValidacionFallida(MethodArgumentNotValidException ex, Model model) {
         model.addAttribute("error", "Error de validación en los datos del formulario");
+        model.addAttribute("mensaje", ex.getMessage());
         return "error/validacion";
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public String manejarViolacionIntegridadDatos(Exception ex, Model model) {
         model.addAttribute("error", "Violación de integridad de datos");
+        model.addAttribute("mensaje", ex.getMessage());
         return "error/integridad";
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public String manejarExcepcionGeneral(Exception ex, Model model) {
-//        model.addAttribute("error", "Ocurrió un error inesperado");
-//        model.addAttribute("mensaje", ex.getMessage());
-//        return "error/general";
-//    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public String metodoNoPermitidoException(HttpRequestMethodNotSupportedException e, Model model){
+        model.addAttribute("error", "Método HTTP no permitido");
+        model.addAttribute("mensaje", e.getMessage());
+        return "error/405";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String manejarExcepcionGeneral(Exception ex, Model model) {
+        model.addAttribute("error", "Ocurrió un error inesperado");
+        model.addAttribute("mensaje", ex.getMessage());
+        return "error/general";
+    }
 
     @ModelAttribute("usuarioLogeado")
     public Usuario mostrarPerfilSide(Authentication authentication){

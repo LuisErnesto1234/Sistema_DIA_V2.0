@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="recursos/meta.html"></div>
-    <title>Editar Perfil - DIA</title>
+    <title th:text="${'Editar Perfil - ' + usuario.nombre + ' ' + usuario.apellido}"></title>
 </head>
 <body class="bg-gray-50">
 <div th:replace="recursos/aside"></div>

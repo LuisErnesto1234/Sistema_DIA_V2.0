@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <div th:replace="recursos/meta.html"></div>
-    <title>Reporte de Control de Agua</title>
+    <title>Reporte de Control de Agua - DIA</title>
 </head>
 <body class="bg-gray-50">
 <div th:replace="recursos/aside"></div>
@@ -129,7 +129,6 @@
                 </table>
             </div>
 
-            <!-- Paginación -->
             <div class="flex justify-center mt-4">
                 <ul class="inline-flex items-center space-x-2">
                     <!-- Anterior -->
@@ -138,11 +137,36 @@
                            class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm">Anterior</a>
                     </li>
 
-                    <!-- Páginas -->
-                    <li th:each="i : ${#numbers.sequence(0, controles.totalPages - 1)}">
+                    <!-- Primera página -->
+                    <li>
+                        <a th:href="@{/reporte/fecha(page=0, year=${selectedYear}, month=${selectedMonth}, day=${selectedDay})}"
+                           th:classappend="${paginaActual == 0} ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'"
+                           class="px-3 py-1 rounded text-sm transition">1</a>
+                    </li>
+
+                    <!-- Puntos suspensivos antes -->
+                    <li th:if="${paginaActual > 3}">
+                        <span class="px-2">...</span>
+                    </li>
+
+                    <!-- Números alrededor de la página actual -->
+                    <li th:each="i : ${#numbers.sequence(paginaActual - 2 > 1 ? paginaActual - 2 : 1, paginaActual + 2 < controles.totalPages - 2 ? paginaActual + 2 : controles.totalPages - 2)}">
                         <a th:href="@{/reporte/fecha(page=${i}, year=${selectedYear}, month=${selectedMonth}, day=${selectedDay})}"
                            th:text="${i + 1}"
                            th:classappend="${i == paginaActual} ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'"
+                           class="px-3 py-1 rounded text-sm transition"></a>
+                    </li>
+
+                    <!-- Puntos suspensivos después -->
+                    <li th:if="${paginaActual < controles.totalPages - 4}">
+                        <span class="px-2">...</span>
+                    </li>
+
+                    <!-- Última página -->
+                    <li th:if="${controles.totalPages > 1}">
+                        <a th:href="@{/reporte/fecha(page=${controles.totalPages - 1}, year=${selectedYear}, month=${selectedMonth}, day=${selectedDay})}"
+                           th:classappend="${paginaActual == controles.totalPages - 1} ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'"
+                           th:text="${controles.totalPages}"
                            class="px-3 py-1 rounded text-sm transition"></a>
                     </li>
 
@@ -153,6 +177,7 @@
                     </li>
                 </ul>
             </div>
+
         </div>
     </div>
 </main>

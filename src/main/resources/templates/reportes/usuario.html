@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:x-transition="http://www.w3.org/1999/xhtml">
 <head>
   <div th:replace="recursos/meta.html"></div>
-  <title>Reporte de Control de Agua</title>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <title th:text="${'Reporte de control - ' + usuario.nombre}"></title>
 </head>
 <body class="bg-gray-50">
 <div th:replace="recursos/aside"></div>
@@ -10,22 +11,113 @@
   <div th:replace="recursos/navbar"></div>
   <div class="p-3 md:p-6 lg:p-8">
     <div class="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
+      <!-- Mensaje de Éxito -->
+      <div th:if="${success}"
+           th:text="${success}"
+           class="fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded shadow-lg transition-opacity duration-1000 opacity-100"
+           x-data="{ show: true }"
+           x-init="setTimeout(() => show = false, 3000)"
+           x-show="show"
+           x-transition:leave="transition ease-in duration-1000"
+           x-transition:leave-start="opacity-100"
+           x-transition:leave-end="opacity-0">
+      </div>
+
+      <!-- Mensaje de Error -->
+      <div th:if="${error}"
+           th:text="${error}"
+           class="fixed top-5 right-5 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded shadow-lg transition-opacity duration-1000 opacity-100"
+           x-data="{ show: true }"
+           x-init="setTimeout(() => show = false, 3000)"
+           x-show="show"
+           x-transition:leave="transition ease-in duration-1000"
+           x-transition:leave-start="opacity-100"
+           x-transition:leave-end="opacity-0">
+      </div>
+
       <!-- Encabezado -->
       <div class="px-6 py-5 bg-gradient-to-r from-blue-600 to-blue-700">
-        <div class="flex flex-col items-center md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="flex flex-col items-center md:flex-row justify-between gap-4">
           <div>
-            <h1 class="text-2xl text-center md:text-3xl font-bold text-white flex items-center sm:text-start">
+            <!-- Título -->
+            <h1 class="text-2xl md:text-3xl font-bold text-white text-center md:text-left flex items-center">
               Reporte de Control de Agua
             </h1>
-            <div class="flex justify-center items-center mt-2 text-blue-100 sm:justify-start">
+
+            <!-- Nombre del usuario -->
+            <div class="flex items-center justify-center md:justify-start mt-2 text-blue-100">
               <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span class="text-sm text-center" th:text="${usuario.nombre + ' ' + usuario.apellido}"></span>
+              <span class="text-sm" th:text="${usuario.nombre + ' ' + usuario.apellido}"></span>
             </div>
+            <div th:if="${usuarioLogeado.getNombreRolAmigable() == 'Administrador'}">
+            <div x-data="{ mostrarFormulario: false }" class="mt-4">
+              <button @click="mostrarFormulario = !mostrarFormulario"
+                      class="w-full sm:w-1/2 flex items-center justify-center bg-white/20 hover:bg-white/30 text-white font-semibold px-4 py-2 rounded shadow">
+                <span x-show="!mostrarFormulario" class="text-sm">Mostrar formulario de importación</span>
+                <span x-show="mostrarFormulario" class="text-sm">Ocultar formulario</span>
+              </button>
+
+              <div x-show="mostrarFormulario" class="space-y-4">
+
+                <!-- Botón Exportar Mejorado -->
+                <div class="text-center w-full mt-6 sm:text-left sm:w-1/2">
+                  <a th:href="@{/reportes/usuario/{id}/exportar(id=${usuario.id})}"
+                     class="w-full text-center flex justify-center items-center text-sm inline-flex items-center gap-2 bg-pink-500 hover:bg-white/20 border border-white/20 text-white px-5 py-2.5 rounded-lg transition-all duration-300 shadow hover:shadow-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    Exportar Datos
+                  </a>
+                </div>
+
+                <form th:action="@{/reportes/usuario/{id}/importar(id=${usuario.id})}"
+                      method="post" enctype="multipart/form-data"
+                      class="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-xl shadow-lg transition-all duration-300">
+
+                  <div class="flex flex-col sm:flex-row gap-4 items-center">
+                    <!-- Input File Mejorado -->
+                    <label class="flex-1 w-full sm:w-1/2">
+                      <span class="block text-xs font-medium text-white/80 mb-2">Seleccionar archivo JSON</span>
+                      <div class="relative">
+                        <input type="file" name="archivo" accept=".json" required
+                               class="block w-full text-sm text-gray-300 file:hidden
+                                  file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0
+                                  file:text-sm file:font-semibold file:bg-blue-600/90 file:text-white
+                                  hover:file:bg-blue-700/90 cursor-pointer
+                                  bg-white/5 border border-white/20 rounded-lg p-2
+                                  focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                  transition duration-200" />
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                          <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                          </svg>
+                        </div>
+                      </div>
+                    </label>
+
+                    <!-- Botón Importar -->
+                    <button type="submit"
+                            class="m-0 flex text-sm items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-5 py-2.5 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                      </svg>
+                      Importar Backup
+                    </button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+</div>
           </div>
+
+          <!-- Imagen del usuario -->
           <div class="bg-white/20 p-2 rounded-lg flex items-center justify-center">
-            <img th:src="${usuario.fotoPerfil}" th:alt="${'Foto de perfil de ' + usuario.nombre}" class="w-20 h-20 object-cover rounded-full">
+            <img th:src="${usuario.fotoPerfil}" th:alt="${'Foto de perfil de ' + usuario.nombre}"
+                 class="w-20 h-20 object-cover rounded-full border-2 border-white shadow-md">
           </div>
         </div>
       </div>

@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body onclick="tryEnterFullscreenIfNeeded()">
 <!-- navbar -->
 <div class="py-2 px-6 bg-[#f8f4f3] flex items-center shadow-md shadow-black/5 sticky top-0 w-full left-0 z-30">
     <ul class="flex items-center w-full">
@@ -29,7 +29,7 @@
                 </div>
                 <div class="p-2 md:block text-left">
                     <h2 class="text-sm text-center font-semibold text-gray-800">DIA</h2>
-                    <p class="text-xs text-gray-500">Sistema - Prueba</p>
+                    <p class="text-xs text-gray-500">Sistema - Marcha Blanca</p>
                 </div>
             </button>
         </li>
@@ -41,17 +41,31 @@
         <script>
             const fullscreenButton = document.getElementById('fullscreen-button');
 
-            fullscreenButton.addEventListener('click', toggleFullscreen);
-
-            function toggleFullscreen() {
+            fullscreenButton.addEventListener('click', () => {
                 if (document.fullscreenElement) {
-                    // If already in fullscreen, exit fullscreen
+                    // Si ya está en pantalla completa, salir
                     document.exitFullscreen();
+                    localStorage.removeItem('fullscreen');
                 } else {
-                    // If not in fullscreen, request fullscreen
+                    // Entrar en pantalla completa
+                    document.documentElement.requestFullscreen().then(() => {
+                        localStorage.setItem('fullscreen', 'true');
+                    });
+                }
+            });
+
+            function tryEnterFullscreenIfNeeded() {
+                if (localStorage.getItem('fullscreen') === 'true' && !document.fullscreenElement) {
                     document.documentElement.requestFullscreen();
                 }
             }
+
+            // Limpiar preferencia si se sale del fullscreen manualmente
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    localStorage.removeItem('fullscreen');
+                }
+            });
         </script>
     </ul>
 </div>
