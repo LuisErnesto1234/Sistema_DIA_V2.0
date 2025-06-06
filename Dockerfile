@@ -5,6 +5,7 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # Copia el archivo JAR construido (ajusta el nombre según tu proyecto)
+# Copia el JAR específico (evita usar *.jar si hay múltiples archivos)
 COPY target/Control-Agua-0.0.1-SNAPSHOT.jar app.jar
 
 # Expone el puerto que usa tu aplicación Spring Boot (normalmente 8080)
