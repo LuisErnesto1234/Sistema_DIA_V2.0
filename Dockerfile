@@ -1,17 +1,28 @@
-# Usa una imagen oficial de OpenJDK 17 como base
-FROM eclipse-temurin:17-jdk-alpine
+# Usa una imagen con Maven y JDK 17 para la etapa de construcción
+FROM maven:3.8.6-eclipse-temurin-17 AS builder
 
 # Directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copia el archivo JAR construido (ajusta el nombre según tu proyecto)
-# Copia el JAR específico (evita usar *.jar si hay múltiples archivos)
-COPY target/Control-Agua-0.0.1-SNAPSHOT.jar app.jar
+# Copia los archivos necesarios para construir (incluyendo mvnw y .mvn/)
+COPY pom.xml .
+COPY src ./src
+COPY mvnw .
+COPY .mvn .mvn
 
-RUN ./mvnw -DoutputFile=target/mvn-dependency-list.log -B -DskipTests clean dependency:list install
+# Construye el proyecto y genera el JAR
+RUN ./mvnw clean package -DskipTests
 
-# Expone el puerto que usa tu aplicación Spring Boot (normalmente 8080)
+# Etapa final con solo el JAR
+FROM eclipse-temurin:17-jdk-alpine
+
+WORKDIR /app
+
+# Copia el JAR desde la etapa de construcción
+COPY --from=builder /app/target/Control-Agua-0.0.1-SNAPSHOT.jar app.jar
+
+# Expone el puerto
 EXPOSE 8080
 
 # Comando para ejecutar la aplicación
-CMD ["sh", "-c", "java -jar target/*.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
